@@ -338,7 +338,7 @@ codeunit 50008 TransferOrderEway
 
                               '","productDesc":"' + TransferLine.Description +
 
-                              '","hsnCode":"' + HSN +
+                              '","hsnCode":"' + TransferLine."HSN/SAC Code" +
 
                               '","quantity":"' + DELCHR(FORMAT(Round(TransferLine.Quantity)), '=', ',') +
 
@@ -363,7 +363,7 @@ codeunit 50008 TransferOrderEway
 
                               '","productDesc":"' + TransferLine.Description +
 
-                              '","hsnCode":"' + HSN +
+                              '","hsnCode":"' + TransferLine."HSN/SAC Code" +
 
                               '","quantity":"' + DELCHR(FORMAT(Round(TransferLine.Quantity)), '=', ',') +
 

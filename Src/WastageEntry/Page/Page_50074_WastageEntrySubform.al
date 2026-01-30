@@ -97,25 +97,33 @@ page 50074 "WastageEntrySubform"
                     //     rec."Location Code" := TempWastageHeader."Location Code";//ALLE_NICK_11/1/23_LotFix
                     // End;
 
-                    trigger OnLookup(var Text: Text): Boolean //PT-FBTS 16-01-26
-                    var
-                        SKU: Record "Stockkeeping Unit";
-                        WastageHeader: Record WastageEntryHeader;
-                    begin
-                        WastageHeader.Reset();
-                        WastageHeader.SetRange("No.", Rec."DocumentNo.");
-                        if not WastageHeader.FindFirst() then
-                            exit(false);
-                        SKU.Reset();
-                        SKU.SetRange("Location Code", WastageHeader."Location Code");
-                        SKU.SetRange(WastageItem, true);
-                        SKU.SetFilter("Item No.", '<>%1', '');
-                        if PAGE.RunModal(PAGE::"Stockkeeping Unit List", SKU) = Action::LookupOK then begin
-                            Rec.Validate("Item Code", SKU."Item No.");
-                            //exit(true);
-                        end;
-                        //exit(true);
-                    end;
+                    // trigger OnLookup(var Text: Text): Boolean //PT-FBTS 16-01-26
+                    // var
+                    //     SKU: Record "Stockkeeping Unit";
+                    //     WastageHeader: Record WastageEntryHeader;
+                    // begin
+                    //     WastageHeader.Reset();
+                    //     WastageHeader.SetRange("No.", Rec."DocumentNo.");
+                    //     if not WastageHeader.FindFirst() then
+                    //         exit(false);
+                    //     SKU.Reset();
+                    //     SKU.SetRange("Location Code", WastageHeader."Location Code");
+                    //     SKU.SetRange(WastageItem, true);
+                    //     SKU.SetFilter("Item No.", '<>%1', '');
+                    //     if PAGE.RunModal(PAGE::"Stockkeeping Unit List", SKU) = Action::LookupOK then begin
+                    //         Rec.Validate("Item Code", SKU."Item No.");
+                    //         //Aashish 18-01-2026
+                    //         WastageHeader.Reset();
+                    //         WastageHeader.SetRange("No.", Rec."DocumentNo.");
+                    //         IF WastageHeader.FindFirst() Then
+                    //             //rec."Location Code" := TempWastageHeader."Location Code";//ALLE_NICK_11/1/23_LotFix old Code
+                    //             Rec.Validate("Location Code", WastageHeader."Location Code");
+                    //         Rec.Validate("Posting Date", WastageHeader."Posting date"); //PT-FBTS
+                    //         //Aashish 18-01-2026
+                    //         //exit(true);
+                    //     end;
+                    //     //exit(true);
+                    // end;
 
 
                 }

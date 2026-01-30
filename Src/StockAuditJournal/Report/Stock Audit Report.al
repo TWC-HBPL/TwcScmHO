@@ -21,6 +21,8 @@ report 50012 "Stock Audit Report"
             column(Base_Unit_of_Measure; "Base Unit of Measure") { }
             column(ProdConQty; ProdConQty) { }
 
+
+
             trigger OnAfterGetRecord()
             var
                 myInt: Integer;

@@ -8,7 +8,8 @@ codeunit 50004 AllSCMCustomization
         I: Integer;
         PostedAssemblyHeader_lRec: record "Posted Assembly Header";
     begin
-        PostedAssemblyHeader_lRec.Reset();
+        // PostedAssemblyHeader_lRec.Reset();
+        PostedAssemblyHeader_lRec.SetCurrentKey("Replication Counter");
         IF PostedAssemblyHeader_lRec.FindLast() then
             PostedAssemblyHeader."Replication Counter" := PostedAssemblyHeader_lRec."Replication Counter" + 1
         ELse

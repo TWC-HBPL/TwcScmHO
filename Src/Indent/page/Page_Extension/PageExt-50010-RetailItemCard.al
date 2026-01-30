@@ -2,6 +2,7 @@ pageextension 50010 LSCRetailItemCard extends "LSC Retail Item Card"
 {
     layout
     {
+
         addafter(Blocked)
         {
             field("LSC Recipe Category"; rec."LSC Recipe Category")

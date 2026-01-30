@@ -743,101 +743,101 @@ page 50073 WastageEntryCard
                     TodaysSales := 0;
                     totalPercentageValue := 0;
                     IF Confirm('Do you want to submit this order for approval?', true) then begin
-
-                        WastageEntryLine.Reset(); ///PT-FBTS 16-01-26 Start
-                        WastageEntryLine.SetRange("DocumentNo.", Rec."No.");
-                        if WastageEntryLine.FindFirst() then
-                            repeat
-                                ItemRec.Get(WastageEntryLine."Item Code");
-                                ItemRec.CalcFields("Assembly BOM");
-                                BOMCompRec.Reset();
-                                BOMCompRec.SetRange("Parent Item No.", WastageEntryLine."Item Code");
-                                if BOMCompRec.FindSet() then
-                                    repeat
-                                        I_Uom.Reset();
-                                        I_Uom.SetRange("Item No.", BOMCompRec."No.");
-                                        I_Uom.SetRange(Code, BOMCompRec."Unit of Measure Code");
-                                        if I_Uom.FindFirst() then
-                                            QtyPer := I_Uom."Qty. per Unit of Measure";
-                                        //  Message('unitper%1', QtyPer);
-                                        // WastageEntryLine1.Reset();
-                                        // WastageEntryLine1.SetRange("DocumentNo.", Rec."DocumentNo.");
-                                        // WastageEntryLine1.SetRange("Item Code", BOMCompRec."No.");
-                                        // IF Not WastageEntryLine1.FindFirst() then begin
-                                        if ItemRec."Assembly BOM" then begin
-                                            LineNo += 10000;
-                                            BomWastageCheck.Init();
-                                            BomWastageCheck."Document No." := WastageEntryLine."DocumentNo.";
-                                            BomWastageCheck."LineNo." := LineNo;
-                                            BomWastageCheck.Validate("Item Code", BOMCompRec."No.");
-                                            BomWastageCheck.Validate("Parent Item No.", BOMCompRec."Parent Item No.");
-                                            BomWastageCheck.Validate(Description, BOMCompRec.Description);
-                                            BomWastageCheck.Validate(Date, Rec."Posting date");
-                                            BomWastageCheck.Validate(UOM, BOMCompRec."Unit of Measure Code");
-                                            BomWastageCheck.Validate(Reason, WastageEntryLine."Reason Code");
-                                            BomWastageCheck.Validate("Sale qty.", (BOMCompRec."Quantity per" * I_Uom."Qty. per Unit of Measure" * WastageEntryLine.Quantity));
-
-                                            BomWastageCheck.Insert();
-                                        END;
-                                    until BOMCompRec.Next() = 0;
-                                WastageEntryLine.Validate(UnitPrice, 0);
-                                if ItemRec."Assembly BOM" then begin
-                                    // WastageEntryLine.CalcSums(Quantity);
-                                    WastageEntryLine.Delete();
-                                end;
-                            until WastageEntryLine.Next() = 0;
-                        /////////////////////////////////////////////// BOM  to Bom wastage Insertdata
-                        Clear(LineNo_l);
-                        Clear(LineNo2);
-                        BomWastageCheck1.Reset();
-                        //BomWastageCheck1.SetCurrentKey("item Code");
-                        BomWastageCheck1.SetRange("Document No.", Rec."No.");
-                        IF BomWastageCheck1.FindFirst() then
-                            repeat
-                                Clear(WastQty);
-                                // WastageEntryLine2.Reset();
-                                // WastageEntryLine2.SetCurrentKey("Item Code");
-                                // WastageEntryLine2.SetRange("DocumentNo.", Rec."No.");
-                                // WastageEntryLine2.SetRange("Item Code", BomWastageCheck1."item Code");
-                                // IF WastageEntryLine2.Findset() then BEGIN
-                                WastageEntryLine3.Reset();
-                                WastageEntryLine3.SetRange("DocumentNo.", Rec."No.");
-                                IF WastageEntryLine3.FindLast() then
-                                    LineNo_l := WastageEntryLine3."LineNo." + 10000
-                                Else
-                                    LineNo_l := 10000;
-                                // IF ItemCode <> BomWastageCheck1."Item Code" Then begin
-                                //     ItemCode := BomWastageCheck1."Item Code";
-                                BomWastageCheck2.Reset();
-                                BomWastageCheck2.SetRange("Document No.", Rec."No.");
-                                //BomWastageCheck2.SetRange("item Code", ItemCode);
-                                //BomWastageCheck2.CalcSums("Sale qty.");
-                                WastageEntryLine1.Init();
-                                WastageEntryLine1."DocumentNo." := Rec."No.";
-                                WastageEntryLine1."LineNo." := LineNo_l;
-                                WastageEntryLine1.Validate("Item Code", BomWastageCheck1."item Code");
-                                WastageEntryLine1.Validate("Parent Item No.", BomWastageCheck1."Parent Item No.");
-                                WastageEntryLine1.Validate(Description, BomWastageCheck1.Description);
-                                WastageEntryLine1.Validate("Location Code", rec."Location Code");
-                                WastageEntryLine1.Validate("Posting date", BomWastageCheck1.Date);
-                                WastageEntryLine1.Validate(Quantity, BomWastageCheck1."Sale qty.");
-                                WastageEntryLine1.Validate("Reason Code", BomWastageCheck1.Reason);
-                                WastageEntryLine1."To Data" := true;
-                                WastageEntryLine1.Insert();
-                                DocNo := WastageEntryLine1."DocumentNo.";
-
-
-                            until BomWastageCheck1.Next() = 0;
-
-                        Rec.Exploed := true;
+                        if Rec.Exploed = false then begin
+                            WastageEntryLine.Reset(); ///PT-FBTS 16-01-26 Start
+                            WastageEntryLine.SetRange("DocumentNo.", Rec."No.");
+                            if WastageEntryLine.FindFirst() then
+                                repeat
+                                    ItemRec.Get(WastageEntryLine."Item Code");
+                                    ItemRec.CalcFields("Assembly BOM");
+                                    BOMCompRec.Reset();
+                                    BOMCompRec.SetRange("Parent Item No.", WastageEntryLine."Item Code");
+                                    if BOMCompRec.FindSet() then
+                                        repeat
+                                            I_Uom.Reset();
+                                            I_Uom.SetRange("Item No.", BOMCompRec."No.");
+                                            I_Uom.SetRange(Code, BOMCompRec."Unit of Measure Code");
+                                            if I_Uom.FindFirst() then
+                                                QtyPer := I_Uom."Qty. per Unit of Measure";
+                                            //  Message('unitper%1', QtyPer);
+                                            // WastageEntryLine1.Reset();
+                                            // WastageEntryLine1.SetRange("DocumentNo.", Rec."DocumentNo.");
+                                            // WastageEntryLine1.SetRange("Item Code", BOMCompRec."No.");
+                                            // IF Not WastageEntryLine1.FindFirst() then begin
+                                            if (ItemRec."Assembly BOM") and (ItemRec."Wastage BOM") then begin
+                                                LineNo += 10000;
+                                                BomWastageCheck.Init();
+                                                BomWastageCheck."Document No." := WastageEntryLine."DocumentNo.";
+                                                BomWastageCheck."LineNo." := LineNo;
+                                                BomWastageCheck.Validate("Item Code", BOMCompRec."No.");
+                                                BomWastageCheck.Validate("Parent Item No.", BOMCompRec."Parent Item No.");
+                                                BomWastageCheck.Validate(Description, BOMCompRec.Description);
+                                                BomWastageCheck.Validate(Date, Rec."Posting date");
+                                                BomWastageCheck.Validate(UOM, BOMCompRec."Unit of Measure Code");
+                                                BomWastageCheck.Validate(Reason, WastageEntryLine."Reason Code");
+                                                // BomWastageCheck.Validate("Sale qty.", (BOMCompRec."Quantity per" * I_Uom."Qty. per Unit of Measure" * WastageEntryLine.Quantity));
+                                                BomWastageCheck.Validate("Sale qty.", Round(BOMCompRec."Quantity per" * I_Uom."Qty. per Unit of Measure" * WastageEntryLine.Quantity, 0.00001));
+                                                BomWastageCheck.Insert();
+                                            END;
+                                        until BOMCompRec.Next() = 0;
+                                    WastageEntryLine.Validate(UnitPrice, 0);
+                                    if (ItemRec."Assembly BOM") and (ItemRec."Wastage BOM") then begin
+                                        // WastageEntryLine.CalcSums(Quantity);
+                                        WastageEntryLine.Delete();
+                                    end;
+                                until WastageEntryLine.Next() = 0;
+                            /////////////////////////////////////////////// BOM  to Bom wastage Insertdata
+                            Clear(LineNo_l);
+                            Clear(LineNo2);
+                            BomWastageCheck1.Reset();
+                            //BomWastageCheck1.SetCurrentKey("item Code");
+                            BomWastageCheck1.SetRange("Document No.", Rec."No.");
+                            IF BomWastageCheck1.FindFirst() then
+                                repeat
+                                    Clear(WastQty);
+                                    // WastageEntryLine2.Reset();
+                                    // WastageEntryLine2.SetCurrentKey("Item Code");
+                                    // WastageEntryLine2.SetRange("DocumentNo.", Rec."No.");
+                                    // WastageEntryLine2.SetRange("Item Code", BomWastageCheck1."item Code");
+                                    // IF WastageEntryLine2.Findset() then BEGIN
+                                    WastageEntryLine3.Reset();
+                                    WastageEntryLine3.SetRange("DocumentNo.", Rec."No.");
+                                    IF WastageEntryLine3.FindLast() then
+                                        LineNo_l := WastageEntryLine3."LineNo." + 10000
+                                    Else
+                                        LineNo_l := 10000;
+                                    // IF ItemCode <> BomWastageCheck1."Item Code" Then begin
+                                    //     ItemCode := BomWastageCheck1."Item Code";
+                                    BomWastageCheck2.Reset();
+                                    BomWastageCheck2.SetRange("Document No.", Rec."No.");
+                                    //BomWastageCheck2.SetRange("item Code", ItemCode);
+                                    //BomWastageCheck2.CalcSums("Sale qty.");
+                                    WastageEntryLine1.Init();
+                                    WastageEntryLine1."DocumentNo." := Rec."No.";
+                                    WastageEntryLine1."LineNo." := LineNo_l;
+                                    WastageEntryLine1.Validate("Item Code", BomWastageCheck1."item Code");
+                                    WastageEntryLine1.Validate("Parent Item No.", BomWastageCheck1."Parent Item No.");
+                                    WastageEntryLine1.Validate(Description, BomWastageCheck1.Description);
+                                    WastageEntryLine1.Validate("Location Code", rec."Location Code");
+                                    WastageEntryLine1.Validate("Posting date", BomWastageCheck1.Date);
+                                    WastageEntryLine1.Validate(Quantity, BomWastageCheck1."Sale qty.");
+                                    WastageEntryLine1.Validate("Reason Code", BomWastageCheck1.Reason);
+                                    WastageEntryLine1."To Data" := true;
+                                    WastageEntryLine1.Insert();
+                                    DocNo := WastageEntryLine1."DocumentNo.";
 
 
-                        if Rec.Exploed then
-                            BomExpoledEdit := true
-                        else
-                            BomExpoledEdit := false;
-                        ///PT-FBTS 16-01-26
+                                until BomWastageCheck1.Next() = 0;
 
+                            Rec.Exploed := true;
+
+
+                            if Rec.Exploed then
+                                BomExpoledEdit := true
+                            else
+                                BomExpoledEdit := false;
+                            ///PT-FBTS 16-01-26
+                        end;
 
 
 
@@ -1000,42 +1000,42 @@ page 50073 WastageEntryCard
                                                 TempItemJnlLine."Reason Code" := TempWastageEntryLine."Reason Code";
                                                 TempItemJnlLine."W_Parent Item No." := TempWastageEntryLine."Parent Item No."; //PT-FBTS 22-12-25
                                                 TempItemJnlLine."W_Parent Item Descrption" := TempWastageEntryLine."Parent Item Descrption"; //PT-FBTS 22-12-25
-                                                //as we validation location code on item journal commenting this code
-                                                /*
-                                               //Dimension
-                                               GLSetup.Get();
-                                               DefaultDim.Reset();
-                                               DefaultDim.SetRange("Table ID", 14);
-                                               DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
-                                               DefaultDim.SetRange("Dimension Code", GLSetup."Global Dimension 1 Code");
-                                               if DefaultDim.FindFirst() then begin
-                                                   TempItemJnlLine."Shortcut Dimension 1 Code" := DefaultDim."Dimension Value Code";
-                                                   TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 1 Code");
-                                               end;
+                                                                                                                                             //as we validation location code on item journal commenting this code
+                                                                                                                                             /*
+                                                                                                                                            //Dimension
+                                                                                                                                            GLSetup.Get();
+                                                                                                                                            DefaultDim.Reset();
+                                                                                                                                            DefaultDim.SetRange("Table ID", 14);
+                                                                                                                                            DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
+                                                                                                                                            DefaultDim.SetRange("Dimension Code", GLSetup."Global Dimension 1 Code");
+                                                                                                                                            if DefaultDim.FindFirst() then begin
+                                                                                                                                                TempItemJnlLine."Shortcut Dimension 1 Code" := DefaultDim."Dimension Value Code";
+                                                                                                                                                TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 1 Code");
+                                                                                                                                            end;
 
-                                               GLSetup.Get();
-                                               DefaultDim.Reset();
-                                               DefaultDim.SetRange("Table ID", 14);
-                                               DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
-                                               DefaultDim.SetRange("Dimension Code", GLSetup."Global Dimension 2 Code");
-                                               if DefaultDim.FindFirst() then begin
-                                                   TempItemJnlLine."Shortcut Dimension 2 Code" := DefaultDim."Dimension Value Code";
-                                                   TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 2 Code");
-                                               end;
+                                                                                                                                            GLSetup.Get();
+                                                                                                                                            DefaultDim.Reset();
+                                                                                                                                            DefaultDim.SetRange("Table ID", 14);
+                                                                                                                                            DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
+                                                                                                                                            DefaultDim.SetRange("Dimension Code", GLSetup."Global Dimension 2 Code");
+                                                                                                                                            if DefaultDim.FindFirst() then begin
+                                                                                                                                                TempItemJnlLine."Shortcut Dimension 2 Code" := DefaultDim."Dimension Value Code";
+                                                                                                                                                TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 2 Code");
+                                                                                                                                            end;
 
-                                               //dimesion 3
-                                               GLSetup.Get();
-                                               DefaultDim.Reset();
-                                               DefaultDim.SetRange("Table ID", 14);
-                                               DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
-                                               DefaultDim.SetRange("Dimension Code", GLSetup."Shortcut Dimension 3 Code");
-                                               if DefaultDim.FindFirst() then begin
-                                                   TempItemJnlLine.ValidateShortcutDimCode(3, DefaultDim."Dimension Value Code");
-                                                   // TempItemJnlLine. := DefaultDim."Dimension Value Code";
-                                                   //  TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 2 Code");
-                                               end;
-                                               //end
-                                               */
+                                                                                                                                            //dimesion 3
+                                                                                                                                            GLSetup.Get();
+                                                                                                                                            DefaultDim.Reset();
+                                                                                                                                            DefaultDim.SetRange("Table ID", 14);
+                                                                                                                                            DefaultDim.SetRange("No.", TempItemJnlLine."Location Code");
+                                                                                                                                            DefaultDim.SetRange("Dimension Code", GLSetup."Shortcut Dimension 3 Code");
+                                                                                                                                            if DefaultDim.FindFirst() then begin
+                                                                                                                                                TempItemJnlLine.ValidateShortcutDimCode(3, DefaultDim."Dimension Value Code");
+                                                                                                                                                // TempItemJnlLine. := DefaultDim."Dimension Value Code";
+                                                                                                                                                //  TempItemJnlLine.Validate(TempItemJnlLine."Shortcut Dimension 2 Code");
+                                                                                                                                            end;
+                                                                                                                                            //end
+                                                                                                                                            */
 
                                                 //Validation for insuffient qty 
                                                 //ALLE_NICK_11/1/23_LotFix

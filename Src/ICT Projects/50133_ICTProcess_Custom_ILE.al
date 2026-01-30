@@ -1,4 +1,4 @@
-codeunit 50129 "ICT Processes_Custom"
+codeunit 50133 "ICT Processes_Custom_ILE"
 {
 
     trigger OnRun()
@@ -95,51 +95,6 @@ codeunit 50129 "ICT Processes_Custom"
 
         GetGLSetup;
 
-        xICTHeaderTemp.Reset;
-        xICTHeaderTemp.DeleteAll;
-
-        xICTHeader.Reset;
-        // xICTHeader.SetCurrentKey(xICTHeader."Dist. Location To");
-        // xICTHeader.SetCurrentKey("Source TableNo", "Date Of Status", "Time Of Status", "Dist. Location From");//020126
-        xICTHeader.SetCurrentKey("Source TableNo", "Dist. Location From");//020126
-        xICTHeader.SetFilter("Source TableNo", '%1|%2|%3', 81, 18001, 18005); //FBTS AA 040126
-
-        xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
-        if pProcessDistLocation <> '' then
-            xICTHeader.SetRange(xICTHeader."Dist. Location From", pProcessDistLocation);
-        xICTHeader.SetRange(xICTHeader.Status, xICTHeader.Status::Open);
-        if xICTHeader.FindSet then begin
-            xICTHeaderTemp := xICTHeader;
-            repeat
-                if GuiAllowed then
-                    StatWin.Update(1, xICTHeader."ICT BatchNo");
-
-                if xICTHeader."Number Of Data Lines" <> 0 then begin
-                    xICTLines.Reset;
-                    xICTLines.SetRange("ICT BatchNo", xICTHeader."ICT BatchNo");
-                    if xICTLines.Count <> xICTHeader."Number Of Data Lines" then
-                        Error(lText001, xICTHeader."ICT BatchNo");
-                end;
-
-                if SameICTDocSet(xICTHeaderTemp, xICTHeader) then begin
-                    xICTHeaderTemp := xICTHeader;
-                    IF xICTHeader."Source TableNo" = 81 then
-                        if xICTHeader."Source Code" = 'TRANSFER' then
-                            xICTHeaderTemp."Source code" := '';
-                    xICTHeaderTemp.Insert;
-                end else begin
-                    // if ProcessICTDocSplitSet(xICTHeaderTemp) then begin
-                    ProcessICTDocSplitSet(xICTHeaderTemp);
-                    xICTHeaderTemp.Reset;
-                    xICTHeaderTemp.DeleteAll;
-                    xICTHeaderTemp := xICTHeader;
-                    xICTHeaderTemp.Insert;
-                    //   end;
-                end;
-            until xICTHeader.Next = 0;
-            // if ProcessICTDocSplitSet(xICTHeaderTemp) then;
-            ProcessICTDocSplitSet(xICTHeaderTemp);
-        end;
 
         //FBTS AA 040126
         xICTHeaderTemp.Reset;
@@ -191,9 +146,9 @@ codeunit 50129 "ICT Processes_Custom"
         xICTHeader.Reset;
         // xICTHeader.SetCurrentKey(xICTHeader."Dist. Location To");
         xICTHeader.SetCurrentKey("Source TableNo", "Date Of Status", "Dist. Location From", "Time Of Status");//020126
-        xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
+        xICTHeader.SetFilter("Source TableNo", '%1', 83); //FBTS AA 040126
         xICTHeader.SetFilter("Source Code", '<>%1', 'ITEMJNL');
-        xICTHeader.SetFilter("Source TableNo", '%1', 83);
+        xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
         if pProcessDistLocation <> '' then
             xICTHeader.SetRange(xICTHeader."Dist. Location From", pProcessDistLocation);
         xICTHeader.SetRange(xICTHeader.Status, xICTHeader.Status::Open);
@@ -230,13 +185,13 @@ codeunit 50129 "ICT Processes_Custom"
             ProcessICTDocSplitSet(xICTHeaderTemp);
         end;
 
-
         xICTHeaderTemp.Reset;
         xICTHeaderTemp.DeleteAll;
 
         xICTHeader.Reset;
         // xICTHeader.SetCurrentKey(xICTHeader."Dist. Location To");
         xICTHeader.SetCurrentKey("Source TableNo", "Date Of Status", "Dist. Location From", "Time Of Status");//020126
+        xICTHeader.SetFilter("Source TableNo", '%1', 83); //FBTS AA 040126
         xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
         if pProcessDistLocation <> '' then
             xICTHeader.SetRange(xICTHeader."Dist. Location From", pProcessDistLocation);
@@ -274,6 +229,53 @@ codeunit 50129 "ICT Processes_Custom"
             ProcessICTDocSplitSet(xICTHeaderTemp);
         end;
         //FBTS AA 040126
+
+
+        xICTHeaderTemp.Reset;
+        xICTHeaderTemp.DeleteAll;
+
+        xICTHeader.Reset;
+        // xICTHeader.SetCurrentKey(xICTHeader."Dist. Location To");
+        // xICTHeader.SetCurrentKey("Source TableNo", "Date Of Status", "Time Of Status", "Dist. Location From");//020126
+        xICTHeader.SetCurrentKey("Source TableNo", "Dist. Location From");//020126
+        xICTHeader.SetFilter("Source TableNo", '%1|%2|%3', 81, 18001, 18005); //FBTS AA 040126
+
+        xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
+        if pProcessDistLocation <> '' then
+            xICTHeader.SetRange(xICTHeader."Dist. Location From", pProcessDistLocation);
+        xICTHeader.SetRange(xICTHeader.Status, xICTHeader.Status::Open);
+        if xICTHeader.FindSet then begin
+            xICTHeaderTemp := xICTHeader;
+            repeat
+                if GuiAllowed then
+                    StatWin.Update(1, xICTHeader."ICT BatchNo");
+
+                if xICTHeader."Number Of Data Lines" <> 0 then begin
+                    xICTLines.Reset;
+                    xICTLines.SetRange("ICT BatchNo", xICTHeader."ICT BatchNo");
+                    if xICTLines.Count <> xICTHeader."Number Of Data Lines" then
+                        Error(lText001, xICTHeader."ICT BatchNo");
+                end;
+
+                if SameICTDocSet(xICTHeaderTemp, xICTHeader) then begin
+                    xICTHeaderTemp := xICTHeader;
+                    IF xICTHeader."Source TableNo" = 81 then
+                        if xICTHeader."Source Code" = 'TRANSFER' then
+                            xICTHeaderTemp."Source code" := '';
+                    xICTHeaderTemp.Insert;
+                end else begin
+                    // if ProcessICTDocSplitSet(xICTHeaderTemp) then begin
+                    ProcessICTDocSplitSet(xICTHeaderTemp);
+                    xICTHeaderTemp.Reset;
+                    xICTHeaderTemp.DeleteAll;
+                    xICTHeaderTemp := xICTHeader;
+                    xICTHeaderTemp.Insert;
+                    //   end;
+                end;
+            until xICTHeader.Next = 0;
+            // if ProcessICTDocSplitSet(xICTHeaderTemp) then;
+            ProcessICTDocSplitSet(xICTHeaderTemp);
+        end;
 
         if GuiAllowed then
             StatWin.Close;

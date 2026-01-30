@@ -2,7 +2,7 @@
   "id": "ea9fcf9a-ae0a-4da9-8721-85f2040195aa",
   "name": "TWC_SCM_Customization",
   "publisher": "EY",
-  "version": "1.0.0.120",
+  "version": "1.0.0.121",
   "brief": "",
   "description": "",
   "target": "OnPrem",
@@ -82,6 +82,15 @@
       "from": 50000,
       "to": 51116
     }
+    
   ],
+   "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  },
   "runtime": "11.0"
+    
+  
+  
 }

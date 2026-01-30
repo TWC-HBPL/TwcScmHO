@@ -4,6 +4,13 @@ pageextension 50051 CommonItemPageExtension extends "Item Card"
     {
 
         // Add changes to page layout here
+        addafter(AssemblyBOM) //PT-FBTS 21-01-26
+        {
+            field("Wastage BOM"; Rec."Wastage BOM")
+            {
+                ApplicationArea = all;
+            }
+        }
         addlast(Item)
         {
             field(Special; Rec.Special)

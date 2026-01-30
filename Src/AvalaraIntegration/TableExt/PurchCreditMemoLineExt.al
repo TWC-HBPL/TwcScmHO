@@ -54,6 +54,11 @@ tableextension 50063 CrMemo extends "Purch. Cr. Memo Line"
     keys
     {
         // Add changes to keys here
+        key(Key51; "Document No.", "Location Code")
+        {
+            MaintainSQLIndex = true;
+            SumIndexFields = Amount, "Amount Including VAT";
+        }
     }
 
     fieldgroups

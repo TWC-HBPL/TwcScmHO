@@ -14,8 +14,10 @@
             "port": 1012,
             "breakOnError": "All",
             "launchBrowser": true,
+             
             "tenant": "default",
             "schemaUpdateMode": "ForceSync"
+            
         },
          {
             "name": "Your own server",

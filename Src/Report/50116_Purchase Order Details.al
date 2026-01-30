@@ -5,7 +5,6 @@ report 50116 "Purchase Order Details"
     DefaultLayout = RDLC;
 
     RDLCLayout = 'Src/Report/Purchase Order Details.rdl';
-
     dataset
     {
         dataitem("Purchase Header"; "Purchase Header")
@@ -16,7 +15,6 @@ report 50116 "Purchase Order Details"
             column(PO_No; "No.")
             {
             }
-
             column(Posting_Date; "Posting Date")
             {
 
@@ -53,7 +51,6 @@ report 50116 "Purchase Order Details"
             { }
             column(ComInfostate; ComInfo."State Code")
             { }
-
             column(ComInfoEmail; ComInfo."E-Mail")
             { }
             dataitem("Purchase Line"; "Purchase Line")
@@ -61,9 +58,8 @@ report 50116 "Purchase Order Details"
                 DataItemLink = "Document No." = field("No."), "Document Type" = field("Document Type");
                 DataItemLinkReference = "Purchase Header";
                 DataItemTableView = where("Outstanding Quantity" = filter(> 0));
+                CalcFields = "Short Close";
                 MaxIteration = 90000000;
-
-
                 column(HSN_SAC_Code; "HSN/SAC Code")
                 {
 
@@ -72,25 +68,27 @@ report 50116 "Purchase Order Details"
                 {
 
                 }
-                column(Blanket_Order_No_; "Blanket Order No.")
-                { }
                 column(Location_Code; "Location Code")
                 {
-
                 }
+                column(Blanket_Order_No_; "Blanket Order No.")
+                { }
+                column(Shortcut_Dimension_1_Code; "Shortcut Dimension 1 Code")
+                { }
+                column(Shortcut_Dimension_2_Code; "Shortcut Dimension 2 Code")
+                { }
                 column(Document_No_; "Document No.")
+                { }
+                column(Short_Close; "Short Close")
                 { }
                 column(Description; Description)
                 {
-
                 }
                 column(Unit_of_Measure; UomCode)
                 {
-
                 }
                 column(Quantity; Quantity)
                 {
-
                 }
                 column(Quantity_Received; "Quantity Received")
                 {
@@ -98,11 +96,9 @@ report 50116 "Purchase Order Details"
                 }
                 column(Outstanding_Quantity; "Outstanding Quantity")
                 {
-
                 }
                 column(Direct_Unit_Cost; "Direct Unit Cost")
                 {
-
                 }
                 column(GST_Group_Code; "GST Group Code")
                 {
@@ -175,27 +171,40 @@ report 50116 "Purchase Order Details"
                 {
 
                 }
+                column(Departmentcode; Departmentcode)
+                {
+
+                }
+                column(Departmentname; Departmentname)
+                { }
                 trigger OnAfterGetRecord()
                 var
                     myInt: Integer;
                     PurchRcptLine: Record 121;
                     ItemRec: Record Item;
 
+
                 begin
+                    DimSetRec.Reset();
+                    Clear(Departmentcode);
+                    Clear(Departmentname);
+                    DimSetRec.SetRange("Dimension Set ID", "Dimension Set ID");
+                    DimSetRec.SetFilter("Dimension Code", '%1', 'DEPARTMENT');
+                    if DimSetRec.FindFirst() then begin
+                        DimSetRec.CalcFields("Dimension Value Name");
+                        Departmentcode := DimSetRec."Dimension Value Code";
+                        Departmentname := DimSetRec."Dimension Value Name"; //PT-FBTS 22-01-25
+                    end;
+
                     UOM.Reset();
                     UOM.SetRange(Code, "Purchase Line"."Unit of Measure Code");
                     if UOM.FindFirst() then
                         UomCode := UOM.Code;
-
                     if ItemRec.Get("No.") then begin
                         ItemCat := ItemRec."Item Category Code";
                         ItemDivisonCode := ItemRec."LSC Division Code";
-
-
                     end;
-
                     PurchRcptLine.Reset();
-
                     clear(OverRecQty);
                     PurchRcptLine.SetRange("Order No.", "Document No.");
                     PurchRcptLine.SetRange("Order Line No.", "Line No.");
@@ -376,7 +385,9 @@ report 50116 "Purchase Order Details"
         ItemCat: Code[20];
         VendorProdPosting: code[20];
         ItemDivisonCode: Code[20];
-
+        DimSetRec: Record "Dimension Set Entry";
+        Departmentcode: Code[20];
+        Departmentname: Text[100];
 
 
 }

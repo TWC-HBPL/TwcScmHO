@@ -98,6 +98,10 @@ tableextension 50008 Itemcard extends Item
         }
         //field(50201; "Enable Manual Costing"; Boolean)
         //{ } //FBTS AA
+        field(50114; "Wastage BOM"; Boolean) //PT-FBTS
+        {
+            Caption = 'Wastage BOM';
+        }
     }
 
     var

@@ -960,14 +960,22 @@ codeunit 50120 deletecodeunit
             Error('You are not authorized to Delete Chart Of Accounts.');
     end;
 
-    [EventSubscriber(ObjectType::Page, Page::"Chart of Accounts", 'OnInsertRecordEvent', '', true, true)]
+    [EventSubscriber(ObjectType::Page, Page::"G/L Account Card", 'OnDeleteRecordEvent', '', true, true)]
+    local procedure RunOnDeleteRecordEvent6(var AllowDelete: Boolean; var Rec: Record "G/L Account")
+    var
+        TempUserSetup: Record "User Setup";
+    begin
+        If (TempUserSetup.get(UserId)) then;
+        if Not TempUserSetup."Master Delete allow" then
+            Error('You are not authorized to Delete Chart Of Accounts.');
+    end;
+
+    [EventSubscriber(ObjectType::Page, Page::"G/L Account Card", 'OnInsertRecordEvent', '', true, true)]
     local procedure RunOnInsertRecordEvent38()
     var
         UserSetup: Record "User Setup";
         EnableBool: Boolean;
     begin
-
-
         Usersetup.get(UserId);
         if Usersetup."Edit Master Enable" = false then begin
             Error('You Do not have permission.');
@@ -981,12 +989,12 @@ codeunit 50120 deletecodeunit
     begin
         IF tempUserSetup.Get(UserId) Then;
         IF tempUserSetup."Edit Master view" = false then begin
-
             Error('You do not have a permission.');
         end;
     end;
 
-    [EventSubscriber(ObjectType::Page, Page::"Chart of Accounts", 'OnModifyRecordEvent', '', true, true)]
+
+    [EventSubscriber(ObjectType::Page, Page::"G/L Account Card", 'OnModifyRecordEvent', '', true, true)]
     local procedure RunOnModifyRecordEvent20(var AllowModify: Boolean; var Rec: Record "G/L Account"; var xRec: Record "G/L Account")
     var
         TempUserSetup: Record "User Setup";

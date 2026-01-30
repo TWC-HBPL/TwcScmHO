@@ -40,6 +40,7 @@ table 50008 WastageEntryLine
         field(5; "Item Code"; Code[20])
         {
             DataClassification = ToBeClassified;
+            TableRelation = Item."No." where(Blocked = const(false));
             trigger OnValidate()
             var
                 TempUnitOfMeasure: Record "Unit of Measure";
@@ -79,6 +80,8 @@ table 50008 WastageEntryLine
         field(7; "Quantity"; Decimal)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Wastage Quantity'; // PT
+            DecimalPlaces = 3;
 
             trigger OnValidate()
             begin

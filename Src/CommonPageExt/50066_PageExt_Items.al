@@ -13,6 +13,7 @@ pageextension 50082 ItemExt extends "Item List"
             // }
             field("Open PO Qty."; "Open PO Qty.")
             { ApplicationArea = all; }//PT-FBTS-11082025
+
         }
     }
     // trigger OnOpenPage()
