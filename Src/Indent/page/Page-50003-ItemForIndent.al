@@ -63,7 +63,8 @@ page 50003 "Indent Item"
                         usersetup: Record "User Setup";
                         item1: Record Item;
                         OrderMultiple: Integer;
-
+                        IndetMappingSetup: Record "Indent Mapping"; //PT-FBTS 
+                        TWCPurchasePrice: Record TWCPurchasePrice;
                     begin
 
                         //PT-FBTS 16-09-25 New
@@ -96,6 +97,18 @@ page 50003 "Indent Item"
                             Error('"Indent Unit of Measure is not defined for Item%1..%2', rec."Item No.", 'Please contact administrator');
 
 
+                        //Aashish 21-11-2025
+                        if Rec."Source Method" = Rec."Source Method"::Purchase then begin
+                            TWCPurchasePrice.Reset();
+                            TWCPurchasePrice.SetRange("Item No.", Rec."Item No.");
+                            TWCPurchasePrice.SetRange("Location Code", Rec."Location Code");
+                            TWCPurchasePrice.SetRange("Vendor No.", Rec."Source Location No.");//PT-FBTS-11-02-26
+                            TWCPurchasePrice.SetFilter("Ending Date", '<>%1', 0D);
+                            if not TWCPurchasePrice.FindSet() then
+                                //repeat
+                                    Error('Purchase Price not found for Item %1 at Location %2.Please update TWC Purchase Price.', Rec."Item No.")
+                            // until TWCPurchasePrice.Next() = 0;
+                        end;
                     end;
                 }
                 field(Remarks; Rec.Remarks)
@@ -123,7 +136,9 @@ page 50003 "Indent Item"
                 trigger OnAction();
                 var
                     IndentLine: Record Indentline;
+                    total: Decimal;
                     TWCPurchasePrice: Record TWCPurchasePrice;
+                    TWCPurchasePrice1: Record TWCPurchasePrice;
                     IndentLine1: Record Indentline;
                     IndentLineNew: Record Indentline;
                     IndetSubage: Page "Indent Line";
@@ -174,13 +189,30 @@ page 50003 "Indent Item"
 
                     // /////////////////////////
 
-
-
-
-
-
-
-
+                    //PT-FBTS 28-11-20205
+                    // Rec.Reset();
+                    // Rec.SetRange("Source Method", Rec."Source Method"::Purchase);
+                    IF rec.FindSet() then //PT-FBTS-
+                        repeat
+                            TWCPurchasePrice.Reset();
+                            TWCPurchasePrice.SetRange("Item No.", rec."Item No.");
+                            TWCPurchasePrice.SetRange("Location Code", rec."Location Code");
+                            TWCPurchasePrice.SetRange("Vendor No.", Rec."Source Location No.");//PT-FBTS-11-02-26
+                            if TWCPurchasePrice.FindLast() then begin
+                                //repeat
+                                if rec."Source Method" = Rec."Source Method"::Purchase then begin //PT-FBTS-10-02-2026
+                                    if TWCPurchasePrice."Ending Date" < today then begin
+                                        if rec."Indent Qty" <> 0 then
+                                            Error('Purchase Price for item %1..%2', Rec."Item No.",
+                                            'has expired. Please remove this item from the indent and continue. Additionally, email your Area Manager, SCM, and MDM teams to update the pricing.');
+                                        // Throws an error with variable 'hhd'
+                                        //                                                                                              // end;
+                                    End;                                                                               // until TWCPurchasePrice.Next() = 0;                                                                              // end;
+                                End;
+                            end;
+                        //end;
+                        Until Rec.Next() = 0;
+                    //PT-FBTS 28-11-20205
                     if not Confirm('Do You want to Insert these lines in Indent Page?', false) then
                         exit
                     else begin

@@ -9,6 +9,13 @@ pageextension 50025 SCMPurchaseOrderLineSubform extends "Purchase Order Subform"
 
         }
         */
+        addafter(Quantity)
+        {
+            field("Serial No."; Rec."Serial No.")
+            {
+                ApplicationArea = all;
+            }
+        }
 
         addafter("Blanket Order No.")
         {

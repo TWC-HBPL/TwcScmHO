@@ -67,6 +67,38 @@ pageextension 50057 GSTTransferOrder extends "Posted Transfer Shipment"
         }
         */
 
+        modify("&Print")
+        {
+
+            trigger OnBeforeAction()
+            var
+                TransferShipmentLine: Record "Transfer Shipment Line";
+                Amount_l: Decimal;
+                Location: Record Location;
+                Location1: Record Location;
+            begin
+                if Location.Get(Rec."Transfer-from Code") then;
+                if Location1.Get(Rec."Transfer-to Code") then;
+                if Location."State Code" <> Location1."State Code" then begin
+                    if (Rec."IRN Hash" = '') and (Rec."E-Way Bill No." = '') then
+                        Error('E-invoice and E-waybil is Mandatory');
+                end;
+
+
+                if Location."State Code" = Location1."State Code" then begin
+                    Clear(Amount_l);
+                    TransferShipmentLine.Reset();
+                    TransferShipmentLine.SetRange("Document No.", Rec."No.");
+                    if TransferShipmentLine.FindSet() then
+                        TransferShipmentLine.CalcSums(Amount);
+                    Amount_l := TransferShipmentLine.Amount;
+                    if Rec."E-Way Bill No." = '' then begin
+                        if Amount_l > 50000 then
+                            Error('E-way bill is Mandatory');
+                    end;
+                end;
+            end;
+        }
 
         addLast(Processing)
         {

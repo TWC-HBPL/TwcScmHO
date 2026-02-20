@@ -103,6 +103,8 @@ tableextension 50029 PurchaseLineExt extends "Purchase Line"
         {
 
         }
+        field(50013; "Serial No."; Text[50])
+        { DataClassification = ToBeClassified; }
 
 
 

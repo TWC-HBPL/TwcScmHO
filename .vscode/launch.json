@@ -13,8 +13,7 @@
             "startupObjectType": "Page",
             "port": 1012,
             "breakOnError": "All",
-            "launchBrowser": true,
-             
+            "launchBrowser": true,  
             "tenant": "default",
             "schemaUpdateMode": "ForceSync"
             

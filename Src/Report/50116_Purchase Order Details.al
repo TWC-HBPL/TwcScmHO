@@ -5,12 +5,13 @@ report 50116 "Purchase Order Details"
     DefaultLayout = RDLC;
 
     RDLCLayout = 'Src/Report/Purchase Order Details.rdl';
+
     dataset
     {
         dataitem("Purchase Header"; "Purchase Header")
         {
             DataItemTableView = where("Document Type" = filter(Order));
-            RequestFilterFields = "No.", "Order Date", "Posting Date";
+            RequestFilterFields = "No.", "Order Date", "Posting Date", ShortClosed, "Completely Received";
             // MaxIteration = 50000000;
             column(PO_No; "No.")
             {
@@ -57,7 +58,7 @@ report 50116 "Purchase Order Details"
             {
                 DataItemLink = "Document No." = field("No."), "Document Type" = field("Document Type");
                 DataItemLinkReference = "Purchase Header";
-                DataItemTableView = where("Outstanding Quantity" = filter(> 0));
+                // DataItemTableView = where("Outstanding Quantity" = filter(> 0));
                 CalcFields = "Short Close";
                 MaxIteration = 90000000;
                 column(HSN_SAC_Code; "HSN/SAC Code")

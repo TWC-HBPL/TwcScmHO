@@ -176,6 +176,11 @@ Page 50037 "Purchase Order GRN Subform"
                             CurrPage.Update(false);
                     end;
                 }
+                field("Serial No."; Rec."Serial No.")
+                {
+                    ApplicationArea = all;
+                    Editable = EditBool_1;
+                }
                 field("GST Group Code"; "GST Group Code")
                 {
                     ApplicationArea = all;
@@ -881,6 +886,10 @@ Page 50037 "Purchase Order GRN Subform"
             IF TempLocation.Get(Rec."Location Code") then;
             LocationName := TempLocation.Name;
         end;
+        if rec.Type = Rec.Type::"Fixed Asset" then
+            EditBool_1 := true
+        else
+            EditBool_1 := false;
     end;
 
     trigger OnAfterGetRecord()
@@ -897,6 +906,10 @@ Page 50037 "Purchase Order GRN Subform"
             IF TempLocation.Get(Rec."Location Code") then;
             LocationName := TempLocation.Name;
         end;
+        if rec.Type = Rec.Type::"Fixed Asset" then
+            EditBool_1 := true
+        else
+            EditBool_1 := false;
         //Mahendra 
         /*
         if "Variant Code" = '' then
@@ -1098,6 +1111,7 @@ Page 50037 "Purchase Order GRN Subform"
         InvoiceDiscountPct: Decimal;
         VATAmount: Decimal;
         DimVisible1: Boolean;
+        EditBool_1: Boolean;
         DimVisible2: Boolean;
         DimVisible3: Boolean;
         DimVisible4: Boolean;

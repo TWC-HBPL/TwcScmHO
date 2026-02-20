@@ -43,11 +43,14 @@ page 50004 "Indent Mapping Setup"
                 {
                     ApplicationArea = all;
                 }
+                field("Next day Delivery"; Rec."Next day Delivery")
+                { ApplicationArea = all; }
                 //PT-FBTS 03-07-2024
                 field("Source Location No."; rec."Source Location No.")
                 {
                     ApplicationArea = all;
                 }
+
                 field("Max Qty."; rec."Max Qty.")
                 {
                     ApplicationArea = all;

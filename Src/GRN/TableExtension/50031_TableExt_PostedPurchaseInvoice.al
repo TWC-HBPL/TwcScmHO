@@ -46,6 +46,8 @@ tableextension 50031 PurchInvoiceLineExtension extends "Purch. Inv. Line"
         {
 
         }
+        field(50013; "Serial No."; Text[50])
+        { DataClassification = ToBeClassified; }
 
 
 

@@ -16,6 +16,29 @@ codeunit 50004 AllSCMCustomization
             PostedAssemblyHeader."Replication Counter" := 1;
         //Message('%1', PostedAssemblyHeader."Replication Counter");
     end;
+    //Gaurav_FBTS 020626
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", OnBeforePostPurchLine, '', false, false)]
+    local procedure "Purch.-Post_OnBeforePostPurchLine"(var PurchHeader: Record "Purchase Header"; var PurchLine: Record "Purchase Line"; var IsHandled: Boolean)
+    var
+        fixedAsset: Record "Fixed Asset";
+    begin
+        if PurchLine.Type <> PurchLine.Type::"Fixed Asset" then
+            exit;
+
+        // if PurchLine."Qty. to Receive" <> 0 then//Aashish 09-02-2025
+        //     PurchLine.TestField("Serial No.");//Aashish 09-02-2025
+
+        FixedAsset.Reset();
+        FixedAsset.SetRange("No.", PurchLine."No.");
+        if FixedAsset.FindFirst() then begin
+            FixedAsset."Serial No." := PurchLine."Serial No.";
+            FixedAsset.Modify();
+        end;
+
+    end;
+
+
+
 
     [EventSubscriber(ObjectType::Table, Database::"Transfer Shipment Header", 'OnAfterInsertEvent', '', false, false)]
     local procedure TSH_OnAfterInsert(var Rec: Record "Transfer Shipment Header"; RunTrigger: Boolean)

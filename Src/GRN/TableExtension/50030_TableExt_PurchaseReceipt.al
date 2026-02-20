@@ -54,6 +54,8 @@ tableextension 50030 PurchReceiptExtension extends "Purch. Rcpt. Line"
         {
             DataClassification = ToBeClassified;
         }
+        field(50013; "Serial No."; Text[50])
+        { DataClassification = ToBeClassified; }
 
 
     }

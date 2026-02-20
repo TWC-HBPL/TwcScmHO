@@ -68,6 +68,16 @@ table 50002 "Item For Indent"
         field(50110; "Location Code"; Code[20])//PT-FBTS
         {
         }
+        field(50111; "Source Method"; Option)//PT-FBTS 19-11-25
+        {
+            OptionMembers = " ","Transfer","Purchase","Production";
+        }
+        field(50112; "Source Location No."; Code[20])
+        {
+            TableRelation = if ("Source Method" = filter(purchase)) Vendor else
+            Location;
+        }
+
     }
 
     keys

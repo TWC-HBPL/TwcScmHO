@@ -9,6 +9,10 @@ pageextension 50031 PostedReceiptLineExt extends "Posted Purchase Rcpt. Subform"
             {
                 Caption = 'Remarks';
             }
+            field("Serial No."; Rec."Serial No.")
+            {
+                ApplicationArea = all;
+            }
         }
         addafter("Unit of Measure Code")
         {

@@ -123,7 +123,7 @@ page 50002 IndentCard
                             if Rec.Type = Rec.Type::Item then begin
                                 IF Rec."Order Type" = Rec."Order Type"::Regular then begin
                                     Item.reset;
-                                    Item.SetRange(Special, false);
+                                    //Item.SetRange(Special, false);
                                     Item.SetRange("Item Category Code", rec.Category);
                                     if item.FindFirst() then
                                         repeat
@@ -131,13 +131,18 @@ page 50002 IndentCard
                                             IndentMappingsetup.SetRange("Location Code", Rec."To Location code");
                                             IndentMappingsetup.SetRange("Item No.", Item."No.");
                                             IndentMappingsetup.SetRange("Block Indent", false);//PT-FBTS
+                                            IndentMappingsetup.SetRange("Next day Delivery", false);
                                             IndentMappingsetup.SetRange("Item Category", Item."Item Category Code");
+                                            IndentMappingsetup.SetFilter("Source Location No.", '<>%1', '');//PT-FBTS 11-12-25 add by pranav
+                                            IndentMappingsetup.SetFilter("Sourcing Method", '<>%1', IndentMappingsetup."Sourcing Method"::" ");//PT-FBTS 11-12-25 add by pranav
                                             IF IndentMappingsetup.FindFirst() then begin
 
                                                 ItemforIndent.Init();
                                                 ItemforIndent.Type := ItemforIndent.Type::Item;
                                                 ItemforIndent."Item No." := Item."No.";
                                                 ItemforIndent.Description := Item.Description;
+                                                ItemforIndent."Source Method" := IndentMappingsetup."Sourcing Method";//PT-FBTS 19-11-25
+                                                ItemforIndent."Source Location No." := IndentMappingsetup."Source Location No.";//PT-FBTS-11-02-26
                                                 ItemforIndent."Unit of Measure" := Item."Base Unit of Measure";
                                                 ItemforIndent."Indent No." := rec."No.";
                                                 ItemforIndent."Item Category" := rec.Category;
@@ -173,21 +178,26 @@ page 50002 IndentCard
                                 end;
                                 IF Rec."Order Type" = Rec."Order Type"::Special then begin
                                     Item.reset;
-                                    Item.SetRange(Special, True);
+                                    // Item.SetRange(Special, True);
                                     Item.SetRange("Item Category Code", rec.Category);
                                     if item.FindFirst() then
                                         repeat
                                             IndentMappingsetup.Reset();
                                             IndentMappingsetup.SetRange("Location Code", Rec."To Location code");
                                             IndentMappingsetup.SetRange("Item No.", Item."No.");
+                                            IndentMappingsetup.SetRange("Next day Delivery", true);
                                             IndentMappingsetup.SetRange("Block Indent", false);//PT-FBTS
                                             IndentMappingsetup.SetRange("Item Category", Item."Item Category Code");
+                                            IndentMappingsetup.SetFilter("Source Location No.", '<>%1', '');//PT-FBTS 11-12-25 add by pranav
+                                            IndentMappingsetup.SetFilter("Sourcing Method", '<>%1', IndentMappingsetup."Sourcing Method"::" ");//PT-FBTS 11-12-25 add by pranav
                                             IF IndentMappingsetup.FindFirst() then begin
 
                                                 ItemforIndent.Init();
                                                 ItemforIndent.Type := ItemforIndent.Type::Item;
                                                 ItemforIndent."Item No." := Item."No.";
                                                 ItemforIndent.Description := Item.Description;
+                                                ItemforIndent."Source Method" := IndentMappingsetup."Sourcing Method";//PT-FBTS 19-11-25
+                                                ItemforIndent."Source Location No." := IndentMappingsetup."Source Location No.";//PT-FBTS-11-02-26
                                                 ItemforIndent."Unit of Measure" := Item."Base Unit of Measure";
                                                 ItemforIndent."Indent No." := rec."No.";
                                                 ItemforIndent."Item Category" := rec.Category;
@@ -288,6 +298,9 @@ page 50002 IndentCard
                 trigger OnAction()
                 var
                     usersetup: Record "User Setup";
+                    indentmapp: Record "Indent Mapping";//PTFBTS
+                    ItemIndent: Record "Item For Indent" temporary;//PTFBTS
+                    total: Decimal;//PTFBTS
                     invsetup: Record "Inventory Setup";
                     processdate: DateTime;
                     dur: Duration;
@@ -315,10 +328,10 @@ page 50002 IndentCard
                     indentline.SetRange("DocumentNo.", Rec."No.");
                     IF indentline.FindSet() then
                         repeat
-                            IF Item.Get(indentline."Item Code") then begin
-                                IF Rec."Order Type" = Rec."Order Type"::Special then
-                                    Item.TestField(Special);
-                            end;
+                            // IF Item.Get(indentline."Item Code") then begin
+                            //     IF Rec."Order Type" = Rec."Order Type"::Special then
+                            //         Item.TestField(Special);
+                            // end;
                             IF Item.IsFixedAssetItem then begin
                                 indentline.TestField("FA Subclass");
                             end;

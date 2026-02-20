@@ -83,6 +83,8 @@ table 50003 "Indent Mapping"
         field(14; "Block Indent"; Boolean) //PT-FBTS
         { }
         //PT-FBTS 03-07-2024
+        field(15; "Next day Delivery"; Boolean) //PT-FBTS 29-01-25
+        { }
     }
 
     keys

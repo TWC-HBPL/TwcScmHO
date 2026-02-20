@@ -825,6 +825,8 @@ codeunit 50130 "ICT Functions_Custom"
     local procedure "Assembly-Post_OnBeforePostCorrectionItemJnLine"(
     var ItemJournalLine: Record "Item Journal Line";
     var TempItemLedgEntry: Record "Item Ledger Entry" temporary)
+    var
+        Assline: Record "Posted Assembly Line";
     begin
         if ItemJournalLine."Entry Type" = ItemJournalLine."Entry Type"::"Assembly Consumption" then
             if ItemJournalLine.Correction then
@@ -832,6 +834,14 @@ codeunit 50130 "ICT Functions_Custom"
                     ItemJournalLine.Quantity := ItemJournalLine."Quantity (Base)" / ItemJournalLine."Qty. per Unit of Measure";
                     ItemJournalLine."Invoiced Quantity" := ItemJournalLine.Quantity;
                 end;
+        //FBTS YM 010226 Assembly Undo Costing issue.
+        Assline.reset;
+        Assline.SetRange("Document No.", ItemJournalLine."Document No.");
+        Assline.SetRange("No.", ItemJournalLine."Item No.");
+        if Assline.FindFirst() then begin
+            if ItemJournalLine."Unit Cost" <> Assline."Unit Cost" then
+                ItemJournalLine."Unit Cost" := Assline."Unit Cost";
+        end;
     end;
 
 }

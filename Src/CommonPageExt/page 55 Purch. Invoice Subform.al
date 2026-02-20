@@ -4,6 +4,8 @@ pageextension 50188 MyEon extends "Purch. Invoice Subform"
     {
         addafter(Quantity)
         {
+            field("Serial No."; Rec."Serial No.")
+            { ApplicationArea = all; }
             field("PI Qty."; Rec."PI Qty.")
             {
                 ApplicationArea = all;
