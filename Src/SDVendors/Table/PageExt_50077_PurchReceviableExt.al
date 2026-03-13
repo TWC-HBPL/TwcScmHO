@@ -9,10 +9,23 @@ pageextension 50077 PurchReceviableSetupExt extends "Purchases & Payables Setup"
             {
                 ApplicationArea = All;
                 Caption = 'SD Vendor Posting Group';
-
+            }
+            field("Rate Diff Charge Group"; Rec."Rate Diff Charge Group")
+            {
+                ApplicationArea = All;
+                ToolTip = 'Specifies the value of the Rate Diff Charge Group field.', Comment = '%';
+            }
+            field("Rate Diff Enable"; Rec."Rate Diff Enable")
+            {
+                ApplicationArea = All;
+                ToolTip = 'Specifies the value of the Rate Diff Enable field.', Comment = '%';
+            }
+            field("Email Enable"; Rec."Email Enable") //PT-FBTS 10-02-26
+            {
+                ApplicationArea = All;
+                ToolTip = 'Specifies the value of the Rate Diff Enable field.', Comment = '%';
             }
         }
-
     }
 
     actions

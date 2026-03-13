@@ -63,8 +63,10 @@ pageextension 50052 PostedTransfershipmentListext extends "Posted Transfer Shipm
                 if Location.Get(Rec."Transfer-from Code") then;
                 if Location1.Get(Rec."Transfer-to Code") then;
                 if Location."State Code" <> Location1."State Code" then begin
-                    if (Rec."IRN Hash" = '') and (Rec."E-Way Bill No." = '') then
-                        Error('E-invoice and E-waybil is Mandatory');
+                    if (Rec."IRN Hash" = '') then
+                        Error('E-invoice is Mandatory');
+                    if (Rec."E-Way Bill No." = '') then
+                        Error('E-waybill is Mandatory');
                 end;
 
 

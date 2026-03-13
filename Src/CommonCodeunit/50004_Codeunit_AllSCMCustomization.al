@@ -1569,6 +1569,138 @@ end;
             end;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", OnAfterFinalizePostingOnBeforeCommit, '', false, false)]
+    local procedure "Purch.-Post_OnAfterFinalizePostingOnBeforeCommit"(var PurchHeader: Record "Purchase Header"; var PurchRcptHeader: Record "Purch. Rcpt. Header"; var PurchInvHeader: Record "Purch. Inv. Header"; var PurchCrMemoHdr: Record "Purch. Cr. Memo Hdr."; var ReturnShptHeader: Record "Return Shipment Header"; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; PreviewMode: Boolean; CommitIsSupressed: Boolean; EverythingInvoiced: Boolean)
+    var
+        PurchasepaybleSetup: Record "Purchases & Payables Setup";
+    begin
+        IF NOT PurchCrMemoHdr."Auto Invoice" THEN
+            exit;
+        PurchasepaybleSetup.Get();
+        if PurchasepaybleSetup."Email Enable" then //PT-FBTS 02-03-2026
+            SendVendorMail(PurchCrMemoHdr);
+    end;
+
+    local procedure SendVendorMail(PurchCrMemoHeader: Record "Purch. Cr. Memo Hdr.") //PT-FBTS 02-03-2026
+    var
+        Vendor: Record Vendor;
+        EmailMsg: Codeunit "Email Message";
+        Email: Codeunit Email;
+        TempBlob: Codeunit "Temp Blob";
+        OutStr: OutStream;
+        InStr: InStream;
+        FileName: Text;
+        Body: Text;
+        RecRef: RecordRef;
+        PurchCrMemoHdr2: Record "Purch. Cr. Memo Hdr.";
+    begin
+        // Get Vendor
+        if not Vendor.Get(PurchCrMemoHeader."Buy-from Vendor No.") then
+            exit;
+
+        if Vendor."E-Mail" = '' then
+            exit;
+
+        // Filter Current Credit Memo
+        PurchCrMemoHdr2.Reset();
+        PurchCrMemoHdr2.SetRange("No.", PurchCrMemoHeader."No.");
+        RecRef.GetTable(PurchCrMemoHdr2);
+
+        // Convert Report to PDF
+        TempBlob.CreateOutStream(OutStr);
+        Report.SaveAs(
+            Report::"Purchase - Credit Memo GST",
+            '',
+            ReportFormat::Pdf,
+            OutStr,
+            RecRef);
+
+        TempBlob.CreateInStream(InStr);
+        FileName := PurchCrMemoHeader."No." + '.pdf';
+
+        // Email Body (HTML Format)
+        Body :=
+        //'Hi ' + Vendor.Name + ',<br><br>' +
+
+        // '<b>Subject - Debit Note - Qty/Rate Difference for ' + Vendor.Name + '</b><br><br>' +
+
+        'Dear Team,<br><br>' +
+
+        'We would like to inform you that the items listed below reflect Qty/Rate differences identified during our review.<br>' +
+        'Kindly refer to the attached Purchase Credit Note. We request you to review the same and take the necessary action.<br><br>' +
+
+        'Thanks,<br>' +
+        'Heisetasse Beverages Private Limited';
+
+        // Create & Send Email
+        EmailMsg.Create(
+            Vendor."E-Mail",
+            'Debit Note',
+            Body,
+            true); // TRUE = HTML Body
+
+        EmailMsg.AddAttachment(FileName, 'application/pdf', InStr);
+        Email.Send(EmailMsg);
+
+    end;
+
+
+
+
+
+
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Purchase Document", OnAfterReleasePurchaseDoc, '', false, false)]
+    local procedure "Release Purchase Document_OnAfterReleasePurchaseDoc"(var PurchaseHeader: Record "Purchase Header"; PreviewMode: Boolean; var LinesWereModified: Boolean)
+
+    var
+        PurchHeader2: Record "Purchase Header";
+        LastCounter: Integer;
+    begin
+        PurchHeader2.Reset(); //PT-FBTS 22-02-26
+        PurchHeader2.SetCurrentKey("Replication Counter");
+        PurchHeader2.Ascending(false);
+        if PurchHeader2.FindFirst() then
+            LastCounter := PurchHeader2."Replication Counter"
+        else
+            LastCounter := 0;
+
+
+        PurchaseHeader."Replication Counter" := LastCounter + 1;
+        PurchaseHeader.Modify();
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Undo Purchase Receipt Line",
+                    'OnAfterCode', '', false, false)]
+    local procedure UndoPurchaseReceiptLine_OnAfterCode(
+       var PurchRcptLine: Record "Purch. Rcpt. Line";
+       var UndoPostingManagement: Codeunit "Undo Posting Management")
+    var
+        RcptHeader: Record "Purch. Rcpt. Header";
+        RcptHeader2: Record "Purch. Rcpt. Header";
+        LastCounter: Integer;
+    begin
+        // Current Receipt Header get karo
+        if RcptHeader.Get(PurchRcptLine."Document No.") then begin
+
+            // Table lock karo (duplicate avoid karne ke liye)
+            RcptHeader2.LockTable();
+
+            RcptHeader2.Reset();
+            RcptHeader2.SetCurrentKey("Replication Counter");
+            RcptHeader2.Ascending(false);
+
+            if RcptHeader2.FindFirst() then
+                LastCounter := RcptHeader2."Replication Counter"
+            else
+                LastCounter := 0;
+
+            RcptHeader."Replication Counter" := LastCounter + 1;
+            RcptHeader.Modify();
+        end;
+    end;
+
+
     [EventSubscriber(ObjectType::Page, Page::"Customer Card", 'OnInsertRecordEvent', '', true, true)]
     local procedure RunOnInsertRecordEvent1()
     var

@@ -80,7 +80,8 @@ Page 50038 "OutTransferOrderList"
         Rec.FilterGroup(2);
         Rec.SetRange(Rec."Transfer-from Code", UserSetupRec."Location Code");
         Rec.SetRange(Rec."Completely Shipped", false); //Mahendra added on 14 Aug 
-        rec.SetRange("PARTIAL Shipped",false); //ALLE_NICK_220224
+        rec.SetRange("PARTIAL Shipped", false); //ALLE_NICK_220224
+        rec.SetRange("Direct Transfer", false); //PT-FBTS 12-03-26
         // Rec.SetRange(Rec.Status, Rec.Status::Released);
         Rec.FilterGroup(0);
     end;

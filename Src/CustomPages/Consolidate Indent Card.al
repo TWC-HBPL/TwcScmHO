@@ -162,6 +162,8 @@ page 50161 "Consolidate Indent Card"
         InventorySetup: Record "Inventory Setup";
         NewNo: Code[20];
         LineNo: Integer;
+        ReleasePurchDoc: Codeunit "Release Purchase Document";
+
     begin
         IndentLine.SetRange(" Document No.", DocumentNo);
         IndentLine.SetCurrentKey("Sourcing Method", Store, "Source Location No.");
@@ -175,6 +177,15 @@ page 50161 "Consolidate Indent Card"
                     IndentLine."Sourcing Method"::Purchase:
                         begin
                             if (IndentLine.Store <> CurrentStore) or (IndentLine."Source Location No." <> CurrentSource) then begin
+
+                                if LastPONo <> '' then begin //PT-FBTS 18-02-2026
+                                    PurchHeader.Reset();
+                                    PurchHeader.SetRange("Document Type", PurchHeader."Document Type"::Order);
+                                    PurchHeader.SetRange("No.", LastPONo);
+                                    if PurchHeader.FindFirst() then
+                                        ReleasePurchDoc.Run(PurchHeader);
+                                end;
+
                                 CurrentStore := IndentLine.Store;
                                 CurrentSource := IndentLine."Source Location No.";
 
@@ -210,6 +221,8 @@ page 50161 "Consolidate Indent Card"
                             PurchLine.Insert(true);
                             IndentLine."Referance No." := LastPONo;
                             IndentLine.Modify();
+
+
                         end;
 
                     IndentLine."Sourcing Method"::Transfer:
@@ -251,6 +264,17 @@ page 50161 "Consolidate Indent Card"
 
                 end;
             until IndentLine.Next() = 0;
+
+            if LastPONo <> '' then begin //PT - FBTS 18-02-2026
+                PurchHeader.Reset();
+                PurchHeader.SetRange("Document Type", PurchHeader."Document Type"::Order);
+                PurchHeader.SetRange("No.", LastPONo);
+                if PurchHeader.FindFirst() then
+                    ReleasePurchDoc.Run(PurchHeader);
+            end;
+
+
+
             Rec.Post := true;
         end;
     end;
@@ -278,3 +302,8 @@ page 50161 "Consolidate Indent Card"
             EditBool := true;
     end;
 }
+
+
+
+
+

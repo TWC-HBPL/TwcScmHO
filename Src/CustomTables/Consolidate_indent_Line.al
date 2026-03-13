@@ -20,14 +20,14 @@ table 50151 "Consolidate indent Line"
             else
             if (Type = const("Fixed Assets")) "Fixed Asset"
             else
-            if (Type = const(Item)) Item where(Blocked = const(false), Type = const(Inventory),
+            if (Type = const(Item)) Item where(Blocked = const(false),
             "Base Unit of Measure" = filter(<> ''), "HSN/SAC Code" = filter(<> ''), "GST Credit" = filter('Availment' | 'Non-Availment'));
             ValidateTableRelation = true;
             trigger OnValidate()
             var
                 myInt: Integer;
             begin
-
+                TestField(Type);
             End;
         }
         field(3; "Item Name"; Text[100])
@@ -41,7 +41,8 @@ table 50151 "Consolidate indent Line"
             var
                 myInt: Integer;
             begin
-
+                TestField(Type);
+                TestField("Item No");
                 if Rec.Quantity < 0 then
                     Error('You Can Not Select Negative Quantity');
             end;
@@ -61,6 +62,9 @@ table 50151 "Consolidate indent Line"
                 myInt: Integer;
                 DimensionValue: Record "Dimension Value";
             begin
+                TestField("Item No");//Aashish 10-02-2026
+                TestField(Type);//Aashish 10-02-2026
+                TestField(Quantity);//Aashish 10-02-2026
                 if Rec."Source Location No." = Store then
                     Error('You Cannot Select Same location');
                 DimensionValue.Reset();
@@ -101,11 +105,50 @@ table 50151 "Consolidate indent Line"
             trigger OnValidate()
             var
                 myInt: Integer;
+                TWCPurchasePrice: Record TWCPurchasePrice;
             begin
+
                 if Rec.Type <> Rec.Type::Item then begin
                     if Rec."Sourcing Method" = Rec."Sourcing Method"::Transfer then
                         Error('Transfer sourcing method is only allowed for Item type lines.');
 
+
+
+                    if (Rec."Sourcing Method" = Rec."Sourcing Method"::Purchase) and (rec."Source Location No." <> '') and (rec.Type = rec.Type::Item) then begin   //PT-FBTS 10-02-26
+                        TWCPurchasePrice.Reset();
+                        TWCPurchasePrice.SetRange("Item No.", Rec."Item No");
+                        TWCPurchasePrice.SetRange("Location Code", Rec.Store);
+                        TWCPurchasePrice.SetRange("Vendor No.", rec."Source Location No.");
+                        TWCPurchasePrice.SetFilter("Ending Date", '<>%1', 0D);
+                        if not TWCPurchasePrice.FindSet() then
+                            //repeat
+                            Error('Purchase Price not found for Item %1 at Location %2.Please update TWC Purchase Price.', Rec."Item No")
+                        // until TWCPurchasePrice.Next() = 0;
+                    end;//PT-FBTS 10-02-26
+                        //Until Rec.Next() = 0;
+                    if (Rec."Sourcing Method" = Rec."Sourcing Method"::Purchase) and (rec."Source Location No." <> '') and (rec.Type = rec.Type::Item) then begin
+                        TWCPurchasePrice.Reset();
+                        TWCPurchasePrice.SetRange("Item No.", rec."Item No");
+                        TWCPurchasePrice.SetRange("Location Code", rec.Store);
+                        TWCPurchasePrice.SetRange("Vendor No.", rec."Source Location No.");
+                        if TWCPurchasePrice.FindLast() then begin
+                            //repeat
+                            if rec."Sourcing Method" = Rec."Sourcing Method"::Purchase then begin //PT-FBTS-10-02-2026
+                                if TWCPurchasePrice."Ending Date" < today then begin
+                                    if rec.Quantity <> 0 then
+                                        Error('Purchase Price for item %1..%2', Rec."Item No",
+                                        'has expired. Please remove this item from the indent and continue. Additionally, email your Area Manager, SCM, and MDM teams to update the pricing.');
+                                    // Throws an error with variable 'hhd'
+                                    //                                                                                              // end;
+                                End;                                                                               // until TWCPurchasePrice.Next() = 0;                                                                              // end;
+                            End;
+                        end;
+
+
+
+
+
+                    end;
                 end;
             end;
         }
@@ -118,7 +161,40 @@ table 50151 "Consolidate indent Line"
             var
                 myInt: Integer;
                 DimensionValue: Record "Dimension Value";
+                TWCPurchasePrice: Record TWCPurchasePrice;
             begin
+                TestField("Sourcing Method");
+                // IF rec.FindSet() then //PT-FBTS-
+                //     repeat
+                if (Rec."Sourcing Method" = Rec."Sourcing Method"::Purchase) and (rec.Type = rec.Type::Item) then begin //PT-FBTS 10-02-26
+                    TWCPurchasePrice.Reset();
+                    TWCPurchasePrice.SetRange("Item No.", Rec."Item No");
+                    TWCPurchasePrice.SetRange("Location Code", Rec.Store);
+                    TWCPurchasePrice.SetRange("Vendor No.", Rec."Source Location No.");//Aashish
+                    TWCPurchasePrice.SetFilter("Ending Date", '<>%1', 0D);
+                    if not TWCPurchasePrice.FindSet() then
+                        //repeat
+                        Error('Purchase Price not found for Item %1 at Location %2.Please update TWC Purchase Price.', Rec."Item No")
+                    // until TWCPurchasePrice.Next() = 0;
+                end;//PT-FBTS 10-02-26
+                    //Until Rec.Next() = 0;
+                TWCPurchasePrice.Reset();
+                TWCPurchasePrice.SetRange("Item No.", rec."Item No");
+                TWCPurchasePrice.SetRange("Location Code", rec.Store);
+                TWCPurchasePrice.SetRange("Vendor No.", rec."Source Location No.");//Aashish
+                if TWCPurchasePrice.FindLast() then begin
+                    //repeat
+                    if (rec."Sourcing Method" = Rec."Sourcing Method"::Purchase) and (rec.Type = rec.Type::Item) then begin //PT-FBTS-10-02-2026
+                        if TWCPurchasePrice."Ending Date" < today then begin
+                            if rec.Quantity <> 0 then
+                                Error('Purchase Price for item %1..%2', Rec."Item No",
+                                'has expired. Please remove this item from the indent and continue. Additionally, email your Area Manager, SCM, and MDM teams to update the pricing.');
+                            // Throws an error with variable 'hhd'
+                            //                                                                                              // end;
+                        End;                                                                               // until TWCPurchasePrice.Next() = 0;                                                                              // end;
+                    End;
+                end;
+
                 if Rec."Source Location No." = Store then
                     Error('You Cannot Select Same location');
                 DimensionValue.Reset();
@@ -127,6 +203,8 @@ table 50151 "Consolidate indent Line"
                 if DimensionValue.FindFirst() then
                     Error('Location is Blocked Plase Connect withn Admin');
             end;
+
+
         }
         field(12; "Referance No."; Code[20])
         {
@@ -180,8 +258,6 @@ table 50151 "Consolidate indent Line"
         end;
     end;
 
-
-
     trigger OnDelete()
     begin
 
@@ -195,6 +271,8 @@ table 50151 "Consolidate indent Line"
     local procedure CopyFromStandardText()
     var
         StandardText: Record "Standard Text";
+        dd: Record 39;
+    //ee:Report 18010
     begin
         // "Tax Area Code" := '';
         // "Tax Liable" := false;

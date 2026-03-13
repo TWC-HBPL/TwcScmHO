@@ -49,6 +49,10 @@ tableextension 50063 CrMemo extends "Purch. Cr. Memo Line"
         {
             DataClassification = ToBeClassified;
         }
+        field(50014; "PI Rate"; Decimal) //PT-FBTS 02-03-2026
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 
     keys

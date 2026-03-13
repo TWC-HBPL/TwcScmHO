@@ -4,6 +4,7 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
     {
 
         //indent
+
         field(50001; "Ship to Code"; Option)
         {
             OptionMembers = "Default (Company Address)",Location,"Custom Address";
@@ -150,6 +151,10 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
             // TableRelation = Location.Code where("State Code" = field("Location State Code"),
             // "Use As In-Transit" = filter(false));//PT-FBTS 28-11-25        }
             TableRelation = Location.Code where("Use As In-Transit" = filter(false));
+        }
+        field(50024; "Replication Counter"; Integer)
+        {
+            DataClassification = ToBeClassified;
         }
 
     }

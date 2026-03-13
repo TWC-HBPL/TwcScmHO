@@ -2,6 +2,196 @@ codeunit 50035 "PurchaseCrMemoEwayBill"
 {
     Permissions = tabledata "Purch. Cr. Memo Hdr." = rm;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", OnBeforeDeleteAfterPosting, '', false, false)]
+    local procedure "Purch.-Post_OnBeforeDeleteAfterPosting"(var PurchaseHeader: Record "Purchase Header"; var PurchInvHeader: Record "Purch. Inv. Header"; var PurchCrMemoHdr: Record "Purch. Cr. Memo Hdr."; var SkipDelete: Boolean; CommitIsSupressed: Boolean; var TempPurchLine: Record "Purchase Line" temporary; var TempPurchLineGlobal: Record "Purchase Line" temporary)
+    var /////PT-FBTS 02-03-2026
+        PurPayablesSetup: record "Purchases & Payables Setup";
+        PurchLine: Record "Purchase Line";
+        NewDirectUnitCost: decimal;
+        IsValidCostFound: Boolean;
+        PurchaseHeader_lRec: Record "Purchase Header";
+        HeaderNo1: Code[20];
+        PurchLineCheck: Record "Purchase Line";
+        LineNo2: Integer;
+        PurchaseLine: Record "Purchase Line";
+        PurRecLine: Record "Purch. Rcpt. Line";
+        ItemChargeAssgntPurch: Record "Item Charge Assignment (Purch)";
+        AssignItemChargePurch: Codeunit "Item Charge Assgnt. (Purch.)";
+        AssignableQty: decimal;
+        RefInvNo: Record "Reference Invoice No."; // Table 18011
+        ii: Integer;
+        dsds: Page 18430;
+        RefInvNoMgt: Codeunit "Reference Invoice No. Mgt.";
+        PurchInvHdr: record "Purch. Inv. Header";
+    begin
+        PurchInvHdr.Reset();
+        PurchInvHdr.SetRange("No.", PurchInvHeader."No.");
+        IF PurchInvHdr.FindFirst() then begin
+
+
+
+            IF (PurchaseHeader."Document Type" = PurchaseHeader."Document Type"::Invoice) AND (PurchaseHeader."Auto Invoice") then begin
+                //NS
+                Clear(PurPayablesSetup);
+                PurPayablesSetup.Get();
+                IF Not PurPayablesSetup."Rate Diff Enable" then
+                    exit;
+                PurchLine.Reset();
+                PurchLine.SetRange("Document No.", PurchaseHeader."No.");
+
+                if not PurchLine.FindSet() then
+                    exit;
+
+                repeat
+                    NewDirectUnitCost :=
+                        (PurchLine."GRN Rate" - PurchLine."Direct Unit Cost") * -1;
+
+                    if NewDirectUnitCost > 0 then begin
+                        IsValidCostFound := true;
+                        break;
+                    end;
+                until PurchLine.Next() = 0;
+
+                // ❌ Do NOT create header if no valid cost
+                if not IsValidCostFound then begin
+                    // Message(ErrTxt);
+                    exit;
+                end;
+
+                // =====================
+                // PASS 2: Create Credit Memo Header
+                // =====================
+                PurchaseHeader_lRec.Init();
+                PurchaseHeader_lRec."Document Type" := PurchaseHeader_lRec."Document Type"::"Credit Memo";
+                PurchaseHeader_lRec.Insert(true);
+
+                PurchaseHeader_lRec.Validate("Buy-from Vendor No.", PurchaseHeader."Buy-from Vendor No.");
+                PurchaseHeader_lRec.Validate("Location Code", PurchaseHeader."Location Code");
+                PurchaseHeader_lRec.Validate("Posting Date", PurchaseHeader."Posting Date");
+                PurchaseHeader_lRec."Vendor Cr. Memo No." := PurchaseHeader."Vendor Invoice No.";
+                PurchaseHeader_lRec."Vendor Bill No." := PurchaseHeader."Vendor Bill No.";
+                PurchaseHeader_lRec.VendorInvoiceDate := PurchaseHeader."Document Date";//PT-FBTS-18-02-26
+                PurchaseHeader_lRec."Auto Invoice" := true;
+                PurchaseHeader_lRec.Modify();
+
+                HeaderNo1 := PurchaseHeader_lRec."No.";
+
+                // =====================
+                // PASS 3: Create Credit Memo Lines
+                // =====================
+                PurchLine.Reset();
+                PurchLine.SetRange("Document No.", PurchaseHeader."No.");
+                PurchLine.FindSet();
+
+                repeat
+                    NewDirectUnitCost :=
+                       (PurchLine."GRN Rate" - PurchLine."Direct Unit Cost") * -1;//Aashish 06-02-2025
+
+                    // Skip line if cost <= 0
+                    if NewDirectUnitCost > 0 then begin
+                        // continue;
+
+                        // Get next Line No.
+                        PurchLineCheck.Reset();
+                        PurchLineCheck.SetRange("Document No.", HeaderNo1);
+
+                        if PurchLineCheck.FindLast() then
+                            LineNo2 := PurchLineCheck."Line No." + 10000
+                        else
+                            LineNo2 := 10000;
+
+                        PurchaseLine.Init();
+                        PurchaseLine."Document Type" := PurchaseLine."Document Type"::"Credit Memo";
+                        PurchaseLine."Document No." := HeaderNo1;
+                        PurchaseLine."Line No." := LineNo2;
+                        PurchaseLine.Type := PurchaseLine.Type::"Charge (Item)";
+                        PurchaseLine.Validate("No.", PurPayablesSetup."Rate Diff Charge Group");
+                        PurchaseLine."Description" := PurchLine."Description";//Aashish 12-02-2025
+                        //PurchaseLine.Validate(Quantity, 1);
+                        PurchaseLine.Validate(Quantity, PurchLine."PI Qty.");/// //PT-FBTS-12-02-26
+                        //  PurchaseLine.Validate("Qty. to Receive", PurchaseLine."PI Qty.");
+                        // PurchaseLine.Validate("Qty. to invoice", PurchaseLine."PI Qty.");
+                        PurchaseLine.Validate("Order No", PurchLine."Order No");/////PT-FBTS-12-02-26
+                        PurchaseLine.Validate("Order Line No", PurchLine."Order Line No");/////PT-FBTS-12-02-26
+                        PurchaseLine.Validate("Direct Unit Cost", NewDirectUnitCost);
+                        PurchaseLine.Validate("GST Group Code", PurchLine."GST Group Code");
+                        PurchaseLine.Validate("HSN/SAC Code", PurchLine."HSN/SAC Code");
+                        PurchaseLine."PI Rate" := PurchLine."Direct Unit Cost"; //PT-FBTS-18-02-26
+                        PurchaseLine."GRN Rate" := PurchLine."GRN Rate";//PT-FBTS-18-02-26
+                        // PurchaseLine.Validate("GST Credit", PurchLine."GST Credit");//Aashish
+                        PurchaseLine.Validate("Dimension Set ID", PurchLine."Dimension Set ID");
+                        PurchaseLine."Description 2" := PurchLine."Description 2";//Aashish
+                        PurchaseLine.Remarks := PurchLine.Remarks;//Aashish
+                        PurchaseLine.Validate("Gen. Prod. Posting Group", PurchLine."Gen. Prod. Posting Group");
+
+                        PurchaseLine.Insert(true);
+
+                        // =====================
+                        // Item Charge Assignment
+                        // =====================
+                        if (PurchLine."Receipt No." <> '') and (PurchLine."Receipt Line No." <> 0) then begin
+                            PurRecLine.Reset();
+                            PurRecLine.SetRange("Document No.", PurchLine."Receipt No.");
+                            PurRecLine.SetRange("Line No.", PurchLine."Receipt Line No.");
+
+                            if PurRecLine.FindFirst() then begin
+                                Clear(ItemChargeAssgntPurch);
+                                ItemChargeAssgntPurch.Init();
+                                ItemChargeAssgntPurch."Document Type" :=
+                                    ItemChargeAssgntPurch."Document Type"::"Credit Memo";
+                                ItemChargeAssgntPurch."Document No." := HeaderNo1;
+                                ItemChargeAssgntPurch."Document Line No." := LineNo2;
+                                ItemChargeAssgntPurch."Item Charge No." := PurchaseLine."No.";
+                                ItemChargeAssgntPurch."Applies-to Doc. Type" :=
+                                    ItemChargeAssgntPurch."Applies-to Doc. Type"::Receipt;
+                                ItemChargeAssgntPurch."Applies-to Doc. No." := PurRecLine."Document No.";
+                                ItemChargeAssgntPurch."Applies-to Doc. Line No." := PurRecLine."Line No.";
+                                ItemChargeAssgntPurch."Item No." := PurRecLine."No.";
+                                ItemChargeAssgntPurch.Description := PurRecLine.Description;
+                                //ItemChargeAssgntPurch."Unit Cost" := PurchaseLine."Unit Cost";
+                                ItemChargeAssgntPurch."Unit Cost" := PurchaseLine.Amount;
+                                ItemChargeAssgntPurch.Insert();
+
+                                PurchaseLine.CalcFields("Qty. to Assign", "Qty. Assigned");
+                                AssignableQty :=
+                                    PurchaseLine."Qty. to Invoice" +
+                                    PurchaseLine."Quantity Invoiced" -
+                                    PurchaseLine."Qty. Assigned";
+
+                                AssignItemChargePurch.SuggestAssgnt(
+                                    PurchaseLine,
+                                    AssignableQty,
+                                    PurchaseLine.Amount,
+                                    AssignableQty,
+                                    PurchaseLine.Amount
+                                );
+                            end;
+                        end;
+                    END;
+                until PurchLine.Next() = 0;
+                IF ii = 0 then begin
+                    RefInvNo.Reset();
+                    RefInvNo.Init();
+                    RefInvNo."Document Type" := RefInvNo."Document Type"::"Credit Memo";
+                    RefInvNo."Document No." := HeaderNo1;
+                    RefInvNo."Source Type" := RefInvNo."Source Type"::Vendor;
+                    RefInvNo."Source No." := PurchaseHeader."Buy-from Vendor No.";
+                    RefInvNo."Reference Invoice Nos." := PurchInvHeader."No.";
+                    RefInvNo.Description := 'Auto created from Purchase Invoice';
+                    RefInvNo.Verified := false;
+                    RefInvNo.Insert(true);
+                    RefInvNoMgt.VerifyReferenceNo(RefInvNo);
+                    ii += 1;
+                end;
+            End;
+            //NE
+        End;
+        //PT-FBTS 02-03-2026
+    end;
+
+
+
+
 
 
     procedure CreatePurchCrMemoEwayBill()

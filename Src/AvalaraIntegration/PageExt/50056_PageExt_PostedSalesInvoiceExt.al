@@ -19,6 +19,9 @@ pageextension 50056 PostedSalesExtGST extends "Posted Sales invoice"
                 Amount_l: Decimal;
                 Location: Record Location;
                 Location1: Record Location;
+                HSNSAC: Record "HSN/SAC";
+                IsGoodsLineFound: Boolean;
+                IsGoodsLineFound1: Boolean;
             begin
                 if (rec."GST Customer Type" = Rec."GST Customer Type"::Registered) or
                 (rec."GST Customer Type" = Rec."GST Customer Type"::"SEZ Unit") then begin
@@ -28,31 +31,106 @@ pageextension 50056 PostedSalesExtGST extends "Posted Sales invoice"
                     //     Error('E-waybill is Mandatory');
                 end;
 
-                // if Location.Get(Rec."Location State Code") then;
-                // if Location1.Get(Rec.State) then;
-                if (rec."GST Customer Type" = Rec."GST Customer Type"::Registered) or
-                (rec."GST Customer Type" = Rec."GST Customer Type"::"SEZ Unit") then begin
+                //Aashish 
+                if Rec."GST Customer Type" in
+         [Rec."GST Customer Type"::Registered,
+          Rec."GST Customer Type"::"SEZ Unit"] then begin
+
                     if Rec.State <> Rec."Location State Code" then begin
-                        if (Rec."IRN Hash" = '') then
-                            Error('E-invoice is Mandatory');
-                        if (Rec."E-Way Bill No." = '') then
-                            Error('E-waybill is Mandatory');
+
+                        IsGoodsLineFound1 := false;
+
+                        SalesInvoiceLineRec.Reset();
+                        SalesInvoiceLineRec.SetRange("Document No.", Rec."No.");
+
+                        if SalesInvoiceLineRec.FindSet() then
+                            repeat
+                                if SalesInvoiceLineRec."HSN/SAC Code" <> '' then begin
+
+                                    // Filter HSN master by code and Type = HSN
+                                    HSNSAC.Reset();
+                                    HSNSAC.SetRange(Code, SalesInvoiceLineRec."HSN/SAC Code");
+                                    HSNSAC.SetFilter(Type, '%1', HSNSAC.Type::HSN);
+
+                                    // If HSNSAC exists → this is a goods line
+                                    if HSNSAC.FindFirst() then begin
+                                        IsGoodsLineFound1 := true;
+                                        break; // stop after first goods line found
+                                    end;
+                                end;
+                            until SalesInvoiceLineRec.Next() = 0;
+                        if IsGoodsLineFound1 and (Rec."E-Way Bill No." = '') then
+                            Error('E-Way Bill is Mandatory because Goods line exists.');
                     end;
-                end;
+                end;//
 
                 if Rec.State = Rec."Location State Code" then begin
+
                     Clear(Amount_l);
+                    Clear(IsGoodsLineFound);
+
                     SalesInvoiceLineRec.Reset();
-                    SalesInvoiceLineRec.SetRange("Document No.", Rec."No.");
+                    SalesInvoiceLineRec.SetRange("Document No.", Rec."No."); // Only current document
                     if SalesInvoiceLineRec.FindSet() then
-                        //  TransferShipmentLine.CalcSums(Amount);
-                        Amount_l := SalesInvoiceLineRec.Amount;
-                    if Rec."E-Way Bill No." = '' then begin
-                        if Amount_l > 50000 then
-                            Error('E-way bill is Mandatory');
-                    end;
+                        repeat
+                            if SalesInvoiceLineRec."HSN/SAC Code" <> '' then begin
+
+                                // Check HSN master using SetRange + SetFilter
+                                HSNSAC.Reset();
+                                HSNSAC.SetRange(Code, SalesInvoiceLineRec."HSN/SAC Code");
+                                HSNSAC.SetFilter(Type, '%1', HSNSAC.Type::HSN);
+                                if HSNSAC.FindFirst() then begin
+                                    Amount_l += SalesInvoiceLineRec.Amount; // sum amount only HSN lines
+                                    IsGoodsLineFound := true;
+                                end;
+                            end;
+                        until SalesInvoiceLineRec.Next() = 0;
+
+                    // Validation
+                    if (Amount_l > 50000) and IsGoodsLineFound and (Rec."E-Way Bill No." = '') then
+                        Error('E-way bill is Mandatory for Goods above 50,000.');
                 end;
             end;
+            // trigger OnBeforeAction()
+            // var
+            //     SalesInvoiceLineRec: Record "Sales Invoice Line";
+            //     Amount_l: Decimal;
+            //     Location: Record Location;
+            //     Location1: Record Location;
+            // begin
+            //     if (rec."GST Customer Type" = Rec."GST Customer Type"::Registered) or
+            //     (rec."GST Customer Type" = Rec."GST Customer Type"::"SEZ Unit") then begin
+            //         if (Rec."IRN Hash" = '') then
+            //             Error('E-invoice is Mandatory');
+            //         // if (Rec."E-Way Bill No." = '') then
+            //         //     Error('E-waybill is Mandatory');
+            //     end;
+
+            //     // if Location.Get(Rec."Location State Code") then;
+            //     // if Location1.Get(Rec.State) then;
+            //     if (rec."GST Customer Type" = Rec."GST Customer Type"::Registered) or
+            //     (rec."GST Customer Type" = Rec."GST Customer Type"::"SEZ Unit") then begin
+            //         if Rec.State <> Rec."Location State Code" then begin
+            //             if (Rec."IRN Hash" = '') then
+            //                 Error('E-invoice is Mandatory');
+            //             if (Rec."E-Way Bill No." = '') then
+            //                 Error('E-waybill is Mandatory');
+            //         end;
+            //     end;
+
+            //     if Rec.State = Rec."Location State Code" then begin
+            //         Clear(Amount_l);
+            //         SalesInvoiceLineRec.Reset();
+            //         SalesInvoiceLineRec.SetRange("Document No.", Rec."No.");
+            //         if SalesInvoiceLineRec.FindSet() then
+            //             SalesInvoiceLineRec.CalcSums(Amount);
+            //         Amount_l := SalesInvoiceLineRec.Amount;
+            //         if Rec."E-Way Bill No." = '' then begin
+            //             if Amount_l > 50000 then
+            //                 Error('E-way bill is Mandatory');
+            //         end;
+            //     end;
+            // end;
         }
 
         addlast(processing)

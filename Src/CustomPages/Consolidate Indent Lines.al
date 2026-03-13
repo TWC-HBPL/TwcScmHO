@@ -36,6 +36,7 @@ page 50162 "Consolidate Indent Lines"
 
 
 
+
                     end;
                 }
                 field("Item Name"; Rec."Item Name")

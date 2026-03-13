@@ -2,6 +2,20 @@ tableextension 50055 PurchCrMemoGSTExt extends "Purch. Cr. Memo Hdr."
 {
     fields
     {
+        field(50000; "Auto Invoice"; Boolean) //PT-FBTS
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50015; "Vendor Bill No."; Code[20]) //PT-FBTS
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50107; VendorInvoiceDate; Date)
+        {
+            Caption = 'Vendor Invoice Date';
+
+        }
+
         // Add changes to table fields here
         field(50010; "Acknowledgement No."; Text[30])
         {

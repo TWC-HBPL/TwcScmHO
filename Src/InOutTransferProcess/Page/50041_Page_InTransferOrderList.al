@@ -98,6 +98,7 @@ page 50041 "InTransferOrderList"
         // rec.SetRange("PARTIAL Received",false); //ALLE_NICK_220224 //PT-FBTS-18-09-25
         Rec.SetFilter(Rec."Last Shipment No.", '<>%1', ''); //Mahendra adedd 14 Aug
         rec.SetRange(IntransitExist, true);
+        rec.SetRange("Direct Transfer", false);//PT-FBTS-12-03-2026
         Rec.FilterGroup(0);
 
         //AJ_Alle_09252023

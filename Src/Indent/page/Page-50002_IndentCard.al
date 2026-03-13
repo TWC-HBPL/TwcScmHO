@@ -332,6 +332,9 @@ page 50002 IndentCard
                             //     IF Rec."Order Type" = Rec."Order Type"::Special then
                             //         Item.TestField(Special);
                             // end;
+                            IF Item.Get(indentline."Item Code") then begin
+                                Item.TestField(Blocked, false);//pt-Fnbts
+                            end;
                             IF Item.IsFixedAssetItem then begin
                                 indentline.TestField("FA Subclass");
                             end;

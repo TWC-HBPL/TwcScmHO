@@ -94,6 +94,7 @@ page 51017 "GRN List"
                     ApplicationArea = all;
                     ToolTip = 'Specifies the value of the Quantity field.', Comment = '%';
                 }
+
                 field("Invoiced Qty"; Rec."Invoiced Qty")
                 {
                     ApplicationArea = all;
@@ -367,7 +368,9 @@ page 51017 "GRN List"
                                     PurchaseLine.Validate("Dimension Set ID", PurchaseLineGSTValue."Dimension Set ID");
                                     PurchaseLine."Description 2" := PurchaseLineGSTValue."Description 2";//Aashish
                                     PurchaseLine.Remarks := PurchaseLineGSTValue.Remarks;//Aashish
+                                    PurchaseLine.Validate("TDS Section Code", PurchaseLineGSTValue."TDS Section Code");//PT FBTS-25-02-2026
                                     PurchaseLine.Description := GRN_lRec.Description;
+
 
 
                                     PurchaseLine.Insert();
