@@ -1,4 +1,4 @@
-report 50010 "Pick List TO Report"
+report 50010 LotMappingTranferLineReport
 {
     UsageCategory = ReportsAndAnalysis;
     Caption = 'Pick List TO Report';
@@ -82,6 +82,8 @@ report 50010 "Pick List TO Report"
                     {
                     }
                     column(Qty; Quantity)
+                    { }
+                    column(Expiration_Date; "Expiration Date")
                     { }
                 }
                 trigger OnAfterGetRecord()

@@ -1061,6 +1061,8 @@ page 50036 "PurchaseOrderGRN"
                         TempPostedPurchRecptHead: Record "Purch. Rcpt. Header";
                         PH: Record "Purchase Header";
                     begin
+                        rec.TestField(VendorInvoiceDate);//PT-FBTS 17-03-2026
+                        rec.TestField("Vendor Invoice No.");//PT-FBTS 17-03-2026
                         PostDocument(CODEUNIT::"Purch.-Post (Yes/No)", "Navigate After Posting"::"Posted Document");
                         //Added to show messgae
                         TempPostedPurchRecptHead.Reset();

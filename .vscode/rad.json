@@ -1,1 +1,1 @@
-﻿{"Added":[],"Modified":[],"Removed":[]}
+﻿{"Added":[],"Modified":[{"Id":50690,"Kind":13,"Name":"Update SKU Cost From API","Namespace":""},{"Id":50002,"Kind":10,"Name":"Item For Indent","Namespace":""},{"Id":50003,"Kind":12,"Name":"Indent Item","Namespace":""},{"Id":50036,"Kind":12,"Name":"PurchaseOrderGRN","Namespace":""},{"Id":50056,"Kind":16,"Name":"PostedSalesExtGST","Namespace":""}],"Removed":[{"Id":50692,"Kind":12,"Name":"SKU Cost Update Log List","Namespace":""}]}

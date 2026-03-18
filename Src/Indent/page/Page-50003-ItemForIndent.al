@@ -38,7 +38,14 @@ page 50003 "Indent Item"
                     ApplicationArea = all;
                     Editable = false;
                 }
+
+
                 field("Unit of Measure"; Rec."Indent Unit of Measure")
+                {
+                    ApplicationArea = all;
+                    Editable = false;
+                }
+                field("Purch. Unit of Measure"; Rec."Purch. Unit of Measure")
                 {
                     ApplicationArea = all;
                     Editable = false;
@@ -103,6 +110,8 @@ page 50003 "Indent Item"
                             TWCPurchasePrice.SetRange("Item No.", Rec."Item No.");
                             TWCPurchasePrice.SetRange("Location Code", Rec."Location Code");
                             TWCPurchasePrice.SetRange("Vendor No.", Rec."Source Location No.");//PT-FBTS-11-02-26
+                            TWCPurchasePrice.SetRange("Unit of Measure Code", rec."Purch. Unit of Measure");//Aashish
+                            TWCPurchasePrice.SetFilter("Starting Date", '<=%1', Today);
                             TWCPurchasePrice.SetFilter("Ending Date", '<>%1', 0D);
                             if not TWCPurchasePrice.FindSet() then
                                 //repeat
@@ -197,11 +206,14 @@ page 50003 "Indent Item"
                             TWCPurchasePrice.Reset();
                             TWCPurchasePrice.SetRange("Item No.", rec."Item No.");
                             TWCPurchasePrice.SetRange("Location Code", rec."Location Code");
+                            TWCPurchasePrice.SetFilter("Starting Date", '<=%1', Today);
+                            CalcFields("Purch. Unit of Measure");
+                            TWCPurchasePrice.SetRange("Unit of Measure Code", rec."Purch. Unit of Measure");//aashish
                             TWCPurchasePrice.SetRange("Vendor No.", Rec."Source Location No.");//PT-FBTS-11-02-26
                             if TWCPurchasePrice.FindLast() then begin
                                 //repeat
                                 if rec."Source Method" = Rec."Source Method"::Purchase then begin //PT-FBTS-10-02-2026
-                                    if TWCPurchasePrice."Ending Date" < today then begin
+                                    if (TWCPurchasePrice."Ending Date" <= today) then begin
                                         if rec."Indent Qty" <> 0 then
                                             Error('Purchase Price for item %1..%2', Rec."Item No.",
                                             'has expired. Please remove this item from the indent and continue. Additionally, email your Area Manager, SCM, and MDM teams to update the pricing.');

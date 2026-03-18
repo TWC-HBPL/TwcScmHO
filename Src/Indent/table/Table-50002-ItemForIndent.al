@@ -77,6 +77,11 @@ table 50002 "Item For Indent"
             TableRelation = if ("Source Method" = filter(purchase)) Vendor else
             Location;
         }
+        field(50113; "Purch. Unit of Measure"; Code[20]) //PT-FBTS
+        {
+            FieldClass = FlowField;
+            CalcFormula = lookup(Item."Purch. Unit of Measure" where("No." = field("Item No.")));
+        }
 
     }
 

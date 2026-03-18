@@ -7,6 +7,10 @@ pageextension 50056 PostedSalesExtGST extends "Posted Sales invoice"
         {
 
         }
+        modify("Vehicle No.")
+        { Editable = true; }
+        modify("Vehicle Type")
+        { Editable = true; }
     }
 
     actions
