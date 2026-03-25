@@ -2,14 +2,11 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
 {
     fields
     {
-
         //indent
 
         field(50001; "Ship to Code"; Option)
         {
             OptionMembers = "Default (Company Address)",Location,"Custom Address";
-
-
         }
         field(50002; "Email Sent"; Boolean)
         {
@@ -120,7 +117,7 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
                 rec.Modify();
             end;
         }
-        field(50000; "Auto Invoice"; Boolean) //PT-FBTS
+        field(50027; "Auto Invoice"; Boolean) //PT-FBTS //50000 chanbes 
         {
             DataClassification = ToBeClassified;
         }
@@ -128,7 +125,6 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
         {
             DataClassification = ToBeClassified;
         }
-
         //Gaurav_FBTS 061125
         field(50016; "Response Details"; Boolean)
         {
@@ -156,9 +152,9 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
         {
             DataClassification = ToBeClassified;
         }
-
     }
 
     var
         myInt: Integer;
+
 }

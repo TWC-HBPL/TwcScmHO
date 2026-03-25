@@ -12,7 +12,6 @@ page 50066 "StockAuditSubform"
     LinksAllowed = false;
     MultipleNewLines = true;
 
-
     layout
     {
         area(Content)
@@ -20,12 +19,10 @@ page 50066 "StockAuditSubform"
             repeater(Line)
             {
 
-
                 field("Item Code"; Rec."Item Code")
                 {
                     ApplicationArea = all;
                     // Editable = false;
-
                 }
                 field(Description; Rec.Description)
                 {
@@ -33,7 +30,6 @@ page 50066 "StockAuditSubform"
                 }
                 field(UOM; Rec."Unit of Measure Code")
                 {
-
                 }
                 field("Stock in hand"; "Stock in hand")
                 {
@@ -44,7 +40,6 @@ page 50066 "StockAuditSubform"
                     ApplicationArea = All;
                     Editable = false; //18/10/20204-Aashish
                 }
-
                 field(Quantity; Rec.Quantity)
                 {
                     Editable = false;
