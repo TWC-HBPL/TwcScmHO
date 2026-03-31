@@ -34,6 +34,22 @@
             "tenant": "default",
             "schemaUpdateMode": "ForceSync"
         },
+         {
+            "name": "Your own server",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
+            "server": "http://localhost:8080/BC26",
+            "serverInstance": "BC26",
+            "authentication": "UserPassword",
+            "startupObjectId": 22,
+            "startupObjectType": "Page",
+            "port": 2049,
+            "breakOnError": "All",
+            "launchBrowser": true,
+            "tenant": "default",
+            "schemaUpdateMode": "ForceSync"
+        },
         {
             "name": "Your own server",
             "request": "launch",

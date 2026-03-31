@@ -193,7 +193,8 @@ page 50005 "Sub Indent List"
         transline: Record "Transfer Line";
         transline1: Record "Transfer Line";
         inventorySetup: Record "Inventory Setup";
-        Transno: code[20];
+        //Transno: code[20];
+        Transno: code[25];//PT-FBTS-31-03-2026 JiraID-855
         noseriesmgt: Codeunit NoSeriesManagement;
         IndentLine: Record Indentline;
         TransHdr2: Record "Transfer Header";
