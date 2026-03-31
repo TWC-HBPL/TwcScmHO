@@ -213,7 +213,7 @@ page 50003 "Indent Item"
                             if TWCPurchasePrice.FindLast() then begin
                                 //repeat
                                 if rec."Source Method" = Rec."Source Method"::Purchase then begin //PT-FBTS-10-02-2026
-                                    if (TWCPurchasePrice."Ending Date" < today) then begin //changes 31-03-2026 if (TWCPurchasePrice."Ending Date" <=today)
+                                    if (TWCPurchasePrice."Ending Date" < today) then begin //changes 31-03-2026 if (TWCPurchasePrice."Ending Date" <=today) JIRAID-854
                                         if rec."Indent Qty" <> 0 then
                                             Error('Purchase Price for item %1..%2', Rec."Item No.",
                                             'has expired. Please remove this item from the indent and continue. Additionally, email your Area Manager, SCM, and MDM teams to update the pricing.');
