@@ -69,7 +69,8 @@ report 50690 "Update SKU Cost From API"
         InventorySetup: Record "Inventory Setup";
     begin
 
-        URL := 'http://10.20.2.9:1122/api/values/sku_cost';
+        // URL := 'http://10.20.2.9:1122/api/values/sku_cost';
+        URL := 'http://10.20.0.7:1122/api/values/sku_cost'; //JIRAID-666
 
 
         IF HttpClient.Get(URL, HttpResponseMessage) then begin

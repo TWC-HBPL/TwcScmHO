@@ -8,13 +8,14 @@ codeunit 50004 AllSCMCustomization
         I: Integer;
         PostedAssemblyHeader_lRec: record "Posted Assembly Header";
     begin
-        // PostedAssemblyHeader_lRec.Reset();
-        PostedAssemblyHeader_lRec.SetCurrentKey("Replication Counter");
-        IF PostedAssemblyHeader_lRec.FindLast() then
-            PostedAssemblyHeader."Replication Counter" := PostedAssemblyHeader_lRec."Replication Counter" + 1
-        ELse
-            PostedAssemblyHeader."Replication Counter" := 1;
-        //Message('%1', PostedAssemblyHeader."Replication Counter");
+        /*   PostedAssemblyHeader_lRec.Reset(); //FBTS AA 060426
+           PostedAssemblyHeader_lRec.SetFilter("Posting Date", '>%1', Today - 3); //FBTS AA 060426
+           PostedAssemblyHeader_lRec.SetCurrentKey("Replication Counter");
+           IF PostedAssemblyHeader_lRec.FindLast() then
+               PostedAssemblyHeader."Replication Counter" := PostedAssemblyHeader_lRec."Replication Counter" + 1
+           ELse
+               PostedAssemblyHeader."Replication Counter" := 1;
+           //Message('%1', PostedAssemblyHeader."Replication Counter");*/ //FBTS AA 060426 Commented
     end;
     //Gaurav_FBTS 020626
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", OnBeforePostPurchLine, '', false, false)]
