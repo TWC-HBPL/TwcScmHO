@@ -891,7 +891,8 @@ page 50073 WastageEntryCard
                                 //to send a mail for wastageEntry approval
                                 //MailList.Add('mahendra.patil@in.ey.com');
                                 Subject := 'Wastage Entry ' + Rec."No." + 'Pending approval';
-                                MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50076&dc=0' +
+                                //  MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50076&dc=0' +
+                                MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC26/?company=HBPL&page=50076&dc=0' +//PT-FBTS 10-04-26 JIRAID-864
                                 '<br><br>' + 'Regards' + '<br><br>' + 'IT - Team.';
                                 EmailMessage.Create(tempusersetup.WastageEntryNotification, Subject, MessageBody, true);
                                 EmailCodeunit.Send(EmailMessage);

@@ -513,7 +513,8 @@ page 50141 FAIndentCard
             MailList.Add(UserSetup.IndentNotification);
             Subject := 'Indent Approval Request ' + rec."No." + '';
             MessageBody := 'Hello, ' + currentuser."User ID" + '<br><br>' + 'You have received Indent Approval Request ' + Rec."No." + ' ' + 'from Heisetasse Beverages Pvt. Ltd.';
-            MessageBody += '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50012&dc=0' + '<br><br> Best Regards,<br><br>Procurement Team';
+            //  MessageBody += '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50012&dc=0' + '<br><br> Best Regards,<br><br>Procurement Team';
+            MessageBody += '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC26/?company=HBPL&page=50012&dc=0' + '<br><br> Best Regards,<br><br>Procurement Team';//PT-FBTS 10-04-26 JIRAID- 864
 
             //Regards,Procurement Team Email ID – procurement.twc@thirdwavecoffee.in';
             //'This is a system generated mail.Please do not reply this email';

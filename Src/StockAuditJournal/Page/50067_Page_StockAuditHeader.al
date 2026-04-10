@@ -733,7 +733,8 @@ page 50067 StockAuditHeader
                                     //to send a mail for wastageEntry approval
                                     //MailList.Add('mahendra.patil@in.ey.com');
                                     Subject := 'Inventory Count Entry ' + Rec."No." + 'Pending approval';
-                                    MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50064&dc=0'
+                                    // MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50064&dc=0'
+                                    MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval. The reason for approval is amount ' + Format(TotalAmount) + ' exceeded allowed Limit of ' + Format(totalPercentageValue) + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC26/?company=HBPL&page=50064&dc=0' //PT-FBTS 10-04-26 PT-FBTS JIRAID-
                                     + '<br><br>' + 'Regards' + '<br><br>' + 'IT - Team.';
                                     EmailMessage.Create(tempusersetup.StockEntryNotification, Subject, MessageBody, true);
                                     EmailCodeunit.Send(EmailMessage);

@@ -765,8 +765,9 @@ page 50121 "Quarantine Card"
 
                                     //MailList.Add('mahendra.patil@in.ey.com');
                                     Subject := 'Quarantine Approval For :' + Rec."No.";
-                                    MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval' + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50064&dc=0'
-                                    + '<br><br>' + 'Regards' + '<br><br>' + 'IT - Team.';
+                                    //  MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval' + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC220/?company=HBPL&page=50064&dc=0'
+                                    MessageBody := 'Dear Approver, ' + '<br><br> This Document No. ' + Rec."No." + ' is pending for approval' + '<br><br>' + 'https://erptwc.thirdwavecoffee.in/BC26/?company=HBPL&page=50064&dc=0'//PT-FBTS-10-04-26 JIRAID- 864
+                                  + '<br><br>' + 'Regards' + '<br><br>' + 'IT - Team.';
                                     EmailMessage.Create(tempusersetup."Quarantine Entry Notification", Subject, MessageBody, true);
                                     EmailCodeunit.Send(EmailMessage);
                                     // end;
