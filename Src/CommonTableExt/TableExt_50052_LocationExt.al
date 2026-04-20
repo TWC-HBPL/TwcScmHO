@@ -129,6 +129,11 @@ tableextension 50052 LocationCardExt extends Location
             DataClassification = ToBeClassified;
 
         }
+        field(50128; StoreRegion; Code[20])//PT-FBTS 20-04-26 JiraID-341
+        {
+            caption = 'Location Region';
+            TableRelation = MultiTaxApplicable;
+        }
     }
 
     var

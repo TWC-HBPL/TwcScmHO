@@ -70,7 +70,7 @@ pageextension 50057 GSTTransferOrder extends "Posted Transfer Shipment"
         modify("&Print")
         {
 
-            trigger OnBeforeAction()
+            trigger OnBeforeAction() //JiraID-711
             var
                 TransferShipmentLine: Record "Transfer Shipment Line";
                 Amount_l: Decimal;
@@ -79,24 +79,28 @@ pageextension 50057 GSTTransferOrder extends "Posted Transfer Shipment"
             begin
                 if Location.Get(Rec."Transfer-from Code") then;
                 if Location1.Get(Rec."Transfer-to Code") then;
-                if Location."State Code" <> Location1."State Code" then begin
-                    if (Rec."IRN Hash" = '') then
-                        Error('E-invoice is Mandatory');
-                    if (Rec."E-Way Bill No." = '') then
-                        Error('E-waybill is Mandatory');
-                end;
+
+                if Location1."Subcontracting Location" = false then begin
+
+                    if Location."State Code" <> Location1."State Code" then begin
+                        if (Rec."IRN Hash" = '') then
+                            Error('E-invoice is Mandatory');
+                        if (Rec."E-Way Bill No." = '') then
+                            Error('E-waybill is Mandatory');
+                    end;
 
 
-                if Location."State Code" = Location1."State Code" then begin
-                    Clear(Amount_l);
-                    TransferShipmentLine.Reset();
-                    TransferShipmentLine.SetRange("Document No.", Rec."No.");
-                    if TransferShipmentLine.FindSet() then
-                        TransferShipmentLine.CalcSums(Amount);
-                    Amount_l := TransferShipmentLine.Amount;
-                    if Rec."E-Way Bill No." = '' then begin
-                        if Amount_l > 50000 then
-                            Error('E-way bill is Mandatory');
+                    if Location."State Code" = Location1."State Code" then begin
+                        Clear(Amount_l);
+                        TransferShipmentLine.Reset();
+                        TransferShipmentLine.SetRange("Document No.", Rec."No.");
+                        if TransferShipmentLine.FindSet() then
+                            TransferShipmentLine.CalcSums(Amount);
+                        Amount_l := TransferShipmentLine.Amount;
+                        if Rec."E-Way Bill No." = '' then begin
+                            if Amount_l > 50000 then
+                                Error('E-way bill is Mandatory');
+                        end;
                     end;
                 end;
             end;

@@ -131,6 +131,10 @@ pageextension 50003 "Location Extension" extends "Location Card"
                 {
                     ApplicationArea = all;
                 }
+                field(StoreRegion; Rec.StoreRegion) //PT-FBTS JiraID-341
+                {
+                    ApplicationArea = all;
+                }
             }
 
         }

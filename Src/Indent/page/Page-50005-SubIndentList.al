@@ -199,6 +199,16 @@ page 50005 "Sub Indent List"
         IndentLine: Record Indentline;
         TransHdr2: Record "Transfer Header";
         IndentLn: Record Indentline;
+        LineNo: Integer;
+        LocationRec: Record Location;
+        MultipleTaxApplicable: Record "Multiple Tax Applicable";
+        storeReason: Option;
+        Item: Record Item;
+        StockkeepingUnitPrice: Record "Stockkeeping Unit";
+        GSTPer: Decimal;
+        BookvalueGST: Decimal;
+        i: Integer;
+        TaxCaseExecution: Codeunit "Use Case Execution";
     begin
         inventorySetup.Get();
         Clear(Transno);
@@ -209,7 +219,8 @@ page 50005 "Sub Indent List"
             repeat
                 IF Transno <> IndentLine."DocumentNo." then begin
                     transHdr.Init();
-                    transHdr.Validate("No.", noseriesmgt.GetNextNo(inventorySetup."Transfer Order Nos.", WorkDate(), true));
+                    transHdr."No." := noseriesmgt.GetNextNo(inventorySetup."Transfer Order Nos.", WorkDate(), true);
+                    transHdr.Insert();
                     transHdr.Validate("Transfer-from Code", IndentLine."Location/StoreNo.From");
                     transHdr.Validate("Transfer-to Code", IndentLine."Location/StoreNo.To");
                     transHdr.Validate("Posting Date", IndentLine."Request Delivery Date");
@@ -218,38 +229,71 @@ page 50005 "Sub Indent List"
                     // transHdr.Validate("In-Transit Code", 'INTRANSIT');//AsPerREQ12102023
                     transHdr.Validate("In-Transit Code", 'INTRANSIT1');
                     transHdr.Validate("Shipment Date", recIndent."Posting date");
-                    transHdr.Insert(true);
-
-
-                    transline.Init();
-                    transline.Validate("Document No.", transHdr."No.");
-                    transline.Validate("Line No.", 10000);
-                    transline.Validate("Item No.", IndentLine."Item Code");
-                    transline.Validate(Quantity, IndentLine.Quantity);
-                    IndentLine.CalcFields(UOM);
-                    transline.validate("Unit of Measure Code", IndentLine.UOM);
-                    transline.Validate("Indent Qty.", IndentLine.Quantity);
-                    transline.Validate("FA Subclass", IndentLine."FA Subclass");
-                    transline.Insert(true);
                     Transno := IndentLine."DocumentNo.";
-                end
-                else begin
-                    transline1.Reset();
-                    transline1.SetRange("Document No.", transHdr."No.");
-                    if transline1.FindLast() then;
-                    transline.Init();
-                    transline.Validate("Document No.", transHdr."No.");
-                    transline.Validate("Line No.", transline1."Line No." + 10000);
-                    transline.Validate("Item No.", IndentLine."Item Code");
-                    transline.Validate(Quantity, IndentLine.Quantity);
-                    IndentLine.CalcFields(UOM);
-                    transline.validate("Unit of Measure Code", IndentLine.UOM);
-                    transline.Validate("Indent Qty.", IndentLine.Quantity);
-                    transline.Validate("FA Subclass", IndentLine."FA Subclass");
+                    transHdr.Modify();
+                End;
 
-                    transline.Insert(true);
-                    Transno := IndentLine."DocumentNo.";
-                end;
+                Clear(LineNo); //JiraID-308
+                transline1.Reset();
+                transline1.SetRange("Document No.", transHdr."No.");
+                IF transline1.FindLast() then
+                    LineNo := transline1."Line No." + 10000
+                Else
+                    LineNo := 10000;//JiraID-308
+                transline.Init();
+                transline."Document No." := transHdr."No.";
+                transline."Line No." := LineNo;
+
+                transline.Validate("Item No.", IndentLine."Item Code");
+                IndentLine.CalcFields(UOM);
+                transline.validate("Unit of Measure Code", IndentLine.UOM);
+                transline.Validate(Quantity, IndentLine.Quantity);
+                transline.Validate("Indent Qty.", IndentLine.Quantity);
+                transline.Validate("FA Subclass", IndentLine."FA Subclass");
+
+                LocationRec.Reset(); //JiraID-308
+                LocationRec.SetRange(Code, transHdr."Transfer-from Code");
+                if LocationRec.FindFirst() then begin
+                    MultipleTaxApplicable.Reset();
+                    MultipleTaxApplicable.SetRange(StoreRegion, LocationRec.StoreRegion);
+                    MultipleTaxApplicable.SetRange(Item, transline."Item No.");
+                    if MultipleTaxApplicable.FindFirst() then begin
+                        if transline."Item No." <> '9999999' then begin///PT-FBTS-20-04-26
+                            transline.Validate("GST Group Code", MultipleTaxApplicable."GST Group Code");
+                            transline.Validate("HSN/SAC Code", MultipleTaxApplicable."HSN/SAC Code");
+                        end;
+                    end else begin
+                        if Item.Get(transline."Item No.") then begin
+                            if not item.IsFixedAssetItem then begin
+                                transline.Validate("GST Group Code", Item."GST Group Code");
+                                transline.Validate("HSN/SAC Code", Item."HSN/SAC Code");
+                            end;
+                        end;
+                        //JiraID-308 end;
+                    End;
+                End;
+                transline.Insert(true);
+
+
+                Clear(BookvalueGST);
+                Clear(GSTPer);
+                StockkeepingUnitPrice.Reset(); //PT-FBTS 16-08-2025
+                StockkeepingUnitPrice.SetRange("Location Code", transHdr."Transfer-from Code");
+                StockkeepingUnitPrice.SetRange("Item No.", transline."Item No.");
+                if StockkeepingUnitPrice.FindFirst() then begin
+                    Evaluate(GSTPer, transline."GST Group Code");
+                    BookvalueGST := Round(StockkeepingUnitPrice."Unit Cost" / (100 + GSTPer) * 100);
+                    transline.Validate("Transfer Price", BookvalueGST);
+                End
+                else
+                    if Item.Get(transline."Item No.") then begin
+                        Evaluate(GSTPer, transline."GST Group Code");
+                        BookvalueGST := Round(Item."Unit Cost" / (100 + GSTPer) * 100);
+                        transline.Validate("Transfer Price", BookvalueGST);
+                    end;
+                TaxCaseExecution.HandleEvent('OnAfterTransferPrirce', transline, '', 0);
+                transline.Modify(true);
+
             until IndentLine.Next() = 0;
         TransHdr2.Reset();
         TransHdr2.SetRange("No.", transHdr."No.");
@@ -267,7 +311,7 @@ page 50005 "Sub Indent List"
         recIndent.Validate(Status);
         Commit();
         recIndent.Modify(true);
-        CurrPage.Update(true);
+        //CurrPage.Update(true);
 
 
 

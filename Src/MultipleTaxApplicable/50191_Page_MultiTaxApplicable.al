@@ -29,6 +29,13 @@ page 50191 "Multiple Tax Applicable"
                 {
                     ApplicationArea = all;
                 }
+                field(StoreRegion; Rec.StoreRegion)//Jira ID-341
+                {
+                    ApplicationArea = all;
+                    Caption = 'Store Region';
+                    ShowMandatory = true;
+
+                }
             }
         }
     }
@@ -51,4 +58,26 @@ page 50191 "Multiple Tax Applicable"
 
     var
         myInt: Integer;
+
+    trigger OnQueryClosePage(CloseAction: Action): Boolean //Jira ID-341
+    var
+        MultiTax: Record "Multiple Tax Applicable";
+    begin
+        // Copy current page filter context (if any)
+        MultiTax.Copy(Rec);
+
+        // Loop through visible/filtered records
+        if MultiTax.FindSet() then
+            repeat
+                if MultiTax."HSN/SAC CODE" = '' then
+                    Error(
+                        'Please fill the HSN/SAC Code before closing the page.\Vendor: %1\Item: %2\Store Region: %3',
+                        MultiTax.Vendor,
+                        MultiTax.Item,
+                        MultiTax.StoreRegion
+                    );
+            until MultiTax.Next() = 0;
+
+        exit(true);
+    end;
 }
