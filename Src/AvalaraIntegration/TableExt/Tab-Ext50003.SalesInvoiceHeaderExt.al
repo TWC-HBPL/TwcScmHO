@@ -10,6 +10,13 @@ tableextension 50003 "Sales Invoice Header Ext" extends "Sales Invoice Header"
         // {
         //     DataClassification = EndUserIdentifiableInformation;
         // }
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(60000; "DataLine_ICT"; Text[170]) //ICT
         { }
         field(60001; "FieldNo_ICT"; Integer) ////ICT

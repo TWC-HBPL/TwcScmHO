@@ -296,6 +296,14 @@ page 50792 "Posted Purchase Credit Memos1"
                     ToolTip = 'Specifies the date when the related document was created.';
                     Visible = false;
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    ;
+                    Editable = false;
+                    //ToolTip = 'Specifies the name of the vendor who delivered the items.';
+                }
                 field("Applies-to Doc. Type"; Rec."Applies-to Doc. Type")
                 {
                     ApplicationArea = Basic, Suite;

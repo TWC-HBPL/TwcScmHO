@@ -15,6 +15,13 @@ pageextension 50038 ProductionJournalExt extends "Production Journal"
             {
                 caption = 'Production Order Remark';
             }
+            //PT-FBTS_Brand JIRAID-674
+            field(Brand; Rec.Brand)
+            {
+                // caption = 'Production Order Remark';
+                Editable = false;
+                ApplicationArea = all;
+            }
         }
         modify(Quantity) //PT-FBTS -16-10-24
         {
@@ -62,6 +69,9 @@ pageextension 50038 ProductionJournalExt extends "Production Journal"
             var
                 tempprodjournal: Record "Item Journal Line";
             begin
+                //PT-FBTS_Brand JIRAID-674
+                if Rec.Brand = Rec.Brand::" " then
+                    Error('Brand Code is blank Please Check');
                 tempprodjournal.Reset();
                 tempprodjournal.SetRange("Document No.", Rec."Document No.");
                 tempprodjournal.SetRange(ProdutionOrderQtyChanged, true);

@@ -94,7 +94,6 @@ pageextension 50052 PostedTransfershipmentListext extends "Posted Transfer Shipm
                 if Location1.Get(Rec."Transfer-to Code") then;
 
                 if Location1."Subcontracting Location" = false then begin
-
                     if Location."State Code" <> Location1."State Code" then begin
                         if (Rec."IRN Hash" = '') then
                             Error('E-invoice is Mandatory');

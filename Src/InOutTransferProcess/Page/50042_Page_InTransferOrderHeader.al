@@ -66,6 +66,12 @@ page 50042 "In Transfer Order"
                 {
 
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    Editable = false;
+                }
                 field("PARTIAL Shipped"; "PARTIAL Shipped")
                 {
                     ApplicationArea = all;

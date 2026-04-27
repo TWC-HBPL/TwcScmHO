@@ -28,6 +28,12 @@ page 50039 "Out Transfer Order"
                             CurrPage.Update();
                     end;
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    Editable = false;
+                }
                 field("Transfer-from Code"; Rec."Transfer-from Code")
                 {
                     ApplicationArea = Location;

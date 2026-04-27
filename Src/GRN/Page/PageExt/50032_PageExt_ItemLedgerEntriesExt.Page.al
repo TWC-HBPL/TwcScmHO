@@ -4,6 +4,12 @@ pageextension 50032 ItemLedgerEntriesExt extends "Item Ledger Entries"
     {
         addafter("Item No.")
         {
+            //PT-FBTS_Brand JIRAID-674
+            field(Brand; Rec.Brand)
+            {
+                Caption = 'Brand';
+                Editable = false;
+            }
             field("W_Parent Item No."; Rec."W_Parent Item No.") //PT-FBTS-16-01-26
             { ApplicationArea = all; }
             field("W_Parent Item Descrption"; Rec."W_Parent Item Descrption")  //PT-FBTS-16-01-26

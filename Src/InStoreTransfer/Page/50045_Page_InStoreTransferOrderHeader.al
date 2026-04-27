@@ -139,6 +139,11 @@ page 50045 "InStore Transfer Order"
                 {
 
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all; //PT_FBTS
+                }
                 field("Direct Transfer"; Rec."Direct Transfer")
                 {
                     ApplicationArea = Location;
@@ -549,9 +554,34 @@ page 50045 "InStore Transfer Order"
                     ApplicationArea = Location;
                     Caption = 'Re&lease';
                     Image = ReleaseDoc;
-                    RunObject = Codeunit "Release Transfer Document";
+                    //RunObject = Codeunit "Release Transfer Document";
                     ShortCutKey = 'Ctrl+F9';
                     ToolTip = 'Release the document to the next stage of processing. You must reopen the document before you can make changes to it.';
+                    trigger OnAction() //PT-FBTS 180425 
+                    var
+                        TransferLineRec: Record "Transfer Line";
+                        ReleaseTransferDocument: Codeunit "Release Transfer Document";
+                    begin
+                        //PT-FBTS_Brand JIRAID-674
+                        IF Rec.Brand = Rec.Brand::" " then
+                            Error('Brand Must be Required before released');
+                        TransferLineRec.Reset();
+                        TransferLineRec.SetRange("Document No.", Rec."No.");
+                        if TransferLineRec.FindSet() then
+                            repeat
+                                TransferLineRec.CalcFields(ItemInventory);
+                                if TransferLineRec.Quantity > TransferLineRec.ItemInventory then begin
+                                    Error('Not enough inventory for item %1. Required: %2, Available: %3',
+                                        TransferLineRec."Item No.",
+                                        TransferLineRec.Quantity,
+                                        TransferLineRec.ItemInventory)
+                                end
+                                else
+                                    if TransferLineRec.Quantity < TransferLineRec.ItemInventory then
+                                        ReleaseTransferDocument.Run(Rec);
+                            until TransferLineRec.Next() = 0;
+                    end;
+
                     /*
                  trigger OnAction()
                  var

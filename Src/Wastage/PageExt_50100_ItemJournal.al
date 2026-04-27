@@ -5,6 +5,12 @@ pageextension 51115 ItemJournal extends "Item Journal"
         // Add changes to page layout here
         addbefore(Quantity)
         {
+            //PT-FBTS_Brand JIRAID-674
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = All;
+                ToolTip = 'Specifies the value of the Brand field.', Comment = '%';
+            }
             field("Stock in Hand"; Rec."Stock in Hand")
             {
                 ApplicationArea = all;

@@ -185,7 +185,14 @@ page 50036 "PurchaseOrderGRN"
                     }
                 }
 
+
                 field("Document Date"; Rec."Document Date")
+                {
+                    ApplicationArea = Suite;
+                    Editable = false;
+                    ToolTip = 'Specifies the date when the related document was created.';
+                }
+                field(Brand; Rec.Brand)
                 {
                     ApplicationArea = Suite;
                     Editable = false;

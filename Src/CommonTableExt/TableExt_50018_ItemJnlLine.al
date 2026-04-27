@@ -71,6 +71,13 @@ tableextension 50018 ItemJnlLineExt extends "Item Journal Line"
         {
 
         }//PT-FBTS-22-12-2025
+        field(50227; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         //AJ_22012024
         //TodayQuarantine
         //AJ_ALLE_17012023

@@ -32,6 +32,8 @@ page 50125 "Quarantine Discard"
                     Visible = false;
                     Editable = false;
                 }
+                field(Brand; Rec.Brand)
+                { ApplicationArea = all; }
                 field("Entry Type"; Rec."Entry Type")
                 {
                     ApplicationArea = Basic, Suite;

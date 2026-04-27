@@ -109,6 +109,13 @@ table 50905 "GRN"
         {
             DataClassification = ToBeClassified;
         }
+        field(26; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
     }
 
     keys

@@ -46,6 +46,12 @@ page 50155 "FA Direct Transfer Orders"
                     ApplicationArea = Location;
                     ToolTip = 'Specifies that the transfer does not use an in-transit location.';
                 }
+                //PT-FBTS_Brand JIRAID-674FV
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    ToolTip = 'Specifies that the transfer does not use an in-transit location.';
+                }
                 field("Shortcut Dimension 1 Code"; Rec."Shortcut Dimension 1 Code")
                 {
                     ApplicationArea = Dimensions;

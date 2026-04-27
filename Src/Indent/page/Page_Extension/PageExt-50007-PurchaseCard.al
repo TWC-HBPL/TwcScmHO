@@ -3,6 +3,12 @@ pageextension 50007 PurchaseCardExt extends "Purchase Order"
 
     layout
     {
+        addafter("Vendor Order No.")
+        {
+            //PT-FBTS_Brand JIRAID-674
+            field(Brand; Rec.Brand)
+            { ApplicationArea = all; }
+        }
         addafter(Status)
         {
             // field("Creation Location"; "Creation Location")
@@ -221,6 +227,14 @@ pageextension 50007 PurchaseCardExt extends "Purchase Order"
         modify(Post)
         {
             Visible = Seteditable; //PT-FBTS 15-07-2024 
+            //PT-FBTS_Brand JIRAID-674
+            trigger OnBeforeAction()
+            var
+                myInt: Integer;
+            begin
+                if Rec.Brand = Rec.Brand::" " then
+                    Error('Please enter the Brand Code');
+            end;
             // Enabled = false;
         }
         modify("Post &Batch")

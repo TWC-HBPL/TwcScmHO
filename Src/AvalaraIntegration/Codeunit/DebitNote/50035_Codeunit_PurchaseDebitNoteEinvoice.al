@@ -72,6 +72,8 @@ codeunit 50035 "PurchaseCrMemoEwayBill"
                 PurchaseHeader_lRec."Vendor Bill No." := PurchaseHeader."Vendor Bill No.";
                 PurchaseHeader_lRec.VendorInvoiceDate := PurchaseHeader."Document Date";//PT-FBTS-18-02-26
                 PurchaseHeader_lRec."Auto Invoice" := true;
+                PurchaseHeader_lRec.Brand := PurchaseHeader.Brand;// Brand Custom//PT-FBTS_Brand JIRAID-674
+
                 PurchaseHeader_lRec.Modify();
 
                 HeaderNo1 := PurchaseHeader_lRec."No.";

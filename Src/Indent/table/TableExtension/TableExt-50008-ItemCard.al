@@ -102,6 +102,13 @@ tableextension 50008 Itemcard extends Item
         {
             Caption = 'Wastage BOM';
         }
+        field(50115; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
     }
 
     var

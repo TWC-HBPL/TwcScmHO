@@ -70,6 +70,8 @@ page 50073 WastageEntryCard
                     Caption = 'Created By';
                     Editable = false;
                 }
+                field(Brand; Rec.Brand)
+                { ApplicationArea = all; }
                 field(Totalvalue; Rec.TotalWastageValue)
                 {
                     ApplicationArea = All;
@@ -160,6 +162,8 @@ page 50073 WastageEntryCard
 
                 begin
                     begin
+                        IF Rec.Brand = Rec.Brand::" " then //PT-FBTS_Brand JIRAID-674
+                            Error('Please Check then brand Code is Blank');
                         CheckPostingDateAllowed(Rec);//PT-FBTS
                                                      // TestField(Status, Status::Open);//PT-FBTS 16-09-2025
                         TestField(Status, Status::Approved);//PT-FBTS 15-10-2025
@@ -292,7 +296,7 @@ page 50073 WastageEntryCard
                                     TempItemJnlLine.Validate(TempItemJnlLine."Entry Type");
                                     TempItemJnlLine."Item No." := TempWastageEntryLine."Item Code";
                                     TempItemJnlLine.Validate(TempItemJnlLine."Item No.");
-
+                                    TempItemJnlLine.Validate(Brand, REC.Brand);//PT-FBTS_Brand JIRAID-674
 
                                     IF TempItem.Get(TempItemJnlLine."Item No.") then;
                                     TempItemJnlLine."Gen. Prod. Posting Group" := TempItem."Gen. Prod. Posting Group";
@@ -645,7 +649,8 @@ page 50073 WastageEntryCard
                     ItemLedgerEntry: Record "Item Ledger Entry";
                     TransferShipmentLine: Record "Transfer Shipment Line";
                 begin
-
+                    IF Rec.Brand = Rec.Brand::" " then //PT-FBTS_Brand JIRAID-674
+                        Error('Please Check then brand Code is Blank');
                     CheckPostingDateAllowed(Rec);//PT-FBTS
                     TestField(Status, Status::Open);//Aashish 04-09-2025
                     TempWastageEntryLine.Reset();
@@ -972,7 +977,7 @@ page 50073 WastageEntryCard
                                                 TempItemJnlLine.Validate(TempItemJnlLine."Entry Type");
                                                 TempItemJnlLine."Item No." := TempWastageEntryLine."Item Code";
                                                 TempItemJnlLine.Validate(TempItemJnlLine."Item No.");
-
+                                                TempItemJnlLine.Validate(Brand, REC.Brand);//PT-FBTS_Brand JIRAID-674
 
                                                 IF TempItem.Get(TempItemJnlLine."Item No.") then;
                                                 TempItemJnlLine."Gen. Prod. Posting Group" := TempItem."Gen. Prod. Posting Group";

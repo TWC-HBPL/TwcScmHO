@@ -58,6 +58,7 @@ report 50001 "Create Consolidation Orders"
                                 purchHdr.Validate("Indent No.", IndentLine."DocumentNo.");
                                 // purchHdr.Validate("Shortcut Dimension 1 Code", IndentHeader1.DepartmentCode);
                                 purchHdr.Validate("Indent No.", IndentLine."DocumentNo.");
+                                purchHdr.Validate(Brand, indentHdr.Brand); //PT-FBTS Brand//PT-FBTS_Brand JIRAID-674
                                 purchHdr.Validate("Document Date", Today);
                                 purchHdr.Validate("Order Date", IndentLine."Request Delivery Date");
 
@@ -179,7 +180,7 @@ report 50001 "Create Consolidation Orders"
                                 Prodorder.Validate("No.", noseriesmgt.GetNextNo(ManufSetup."Released Order Nos.", WorkDate(), true));
                                 Prodorder.Validate("Source Type", Prodorder."Source Type"::Item);
                                 Prodorder.Validate("Source No.", "Item No.");
-
+                                Prodorder.Validate(Brand, indentHdr.Brand); //PT-FBTS Brand//PT-FBTS_Brand JIRAID-674
                                 IndentLine.CalcFields("Item UOM Qty.of measure");
 
                                 Prodorder.Validate(Quantity, totalqty * IndentLine."Item UOM Qty.of measure");
@@ -227,6 +228,7 @@ report 50001 "Create Consolidation Orders"
                                             transHdr.Validate("In-Transit Code", 'INTRANSIT1');
                                             transHdr.Validate("Shipment Date", indentHdr."Posting date");
                                             transHdr.Validate("Receipt Date", indentHdr."Posting date");
+                                            transHdr.Validate(Brand, indentHdr.Brand);
                                             transHdr.Insert(true);
 
 

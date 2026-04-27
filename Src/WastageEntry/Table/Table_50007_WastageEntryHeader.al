@@ -78,6 +78,25 @@ table 50007 WastageEntryHeader
             DataClassification = ToBeClassified;
             Caption = 'Exploed';
         }
+        field(15; Brand; Option) //PT-FBTS_B
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            var
+                WastageLine: Record WastageEntryLine;
+            begin
+                if Rec.Brand <> xRec.Brand then begin
+
+                    WastageLine.Reset();
+                    WastageLine.SetRange("DocumentNo.", Rec."No.");
+                    if WastageLine.FindFirst() then
+                        Error('You cannot change Brand because lines already exist. Please delete lines first.');
+                end;
+            end;
+        }
 
     }
 

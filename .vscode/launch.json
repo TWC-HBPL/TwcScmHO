@@ -23,6 +23,23 @@
             "request": "launch",
             "type": "al",
             "environmentType": "OnPrem",
+            "server": "http://localhost:8080/FINNAS",
+            "serverInstance": "FINNAS",
+            "authentication": "UserPassword",
+            "startupObjectId": 22,
+            "startupObjectType": "Page",
+            "port": 6049,
+            "breakOnError": "All",
+            "launchBrowser": true,  
+            "tenant": "default",
+            "schemaUpdateMode": "ForceSync"
+            
+        },
+         {
+            "name": "Your own server",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
             "server": "http://localhost:8080/Finance",
             "serverInstance": "Finance",
             "authentication": "UserPassword",

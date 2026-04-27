@@ -2,6 +2,13 @@ tableextension 50187 SalesCrMemoHeaderTabExt extends "Sales Cr.Memo Header"
 {
     fields
     {
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         // PT-FBTS 10-11-2025 RepCounter
         field(50013; "Replication Counter"; Integer)
         {

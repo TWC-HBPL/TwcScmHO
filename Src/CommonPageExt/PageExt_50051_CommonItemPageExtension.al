@@ -3,6 +3,13 @@ pageextension 50051 CommonItemPageExtension extends "Item Card"
     layout
     {
 
+        addafter(Description) //PT-FBTS_Brand JIRAID-674
+        {
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = all;
+            }
+        }
         // Add changes to page layout here
         addafter(AssemblyBOM) //PT-FBTS 21-01-26
         {

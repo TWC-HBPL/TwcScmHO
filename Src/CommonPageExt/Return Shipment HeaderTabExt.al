@@ -2,6 +2,13 @@ tableextension 50177 ReturnShipmentHeaderExt extends "Return Shipment Header"
 {
     fields
     {
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         // Add changes to table fields here
         //PT-FBTS 10-11-2025 RepCounter
         field(50020; "Order No"; Code[20]) //PT-FBTS 02-09-2-2025

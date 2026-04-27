@@ -48,6 +48,7 @@ tableextension 50045 PostedTransferShipmentExt extends "Transfer Shipment Header
             Caption = 'TransferOrderReferenceNo';
             //TableRelation = "Transfer Receipt Header"."No.";
         }
+
         //PT-FBTS 10-11-2025 RepCounter
 
         field(50104; "Replication Counter"; Integer)
@@ -69,6 +70,13 @@ tableextension 50045 PostedTransferShipmentExt extends "Transfer Shipment Header
             end;
         }
         // PT-FBTS 10-11-2025 RepCounter  
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
     }
     keys
     {

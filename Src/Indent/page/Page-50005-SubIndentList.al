@@ -228,6 +228,7 @@ page 50005 "Sub Indent List"
                     transHdr.Validate("Requistion No.", IndentLine."DocumentNo.");
                     // transHdr.Validate("In-Transit Code", 'INTRANSIT');//AsPerREQ12102023
                     transHdr.Validate("In-Transit Code", 'INTRANSIT1');
+                    transHdr.Validate(Brand, recIndent.Brand);//PT-FBTS Brand//PT-FBTS_Brand JIRAID-674
                     transHdr.Validate("Shipment Date", recIndent."Posting date");
                     Transno := IndentLine."DocumentNo.";
                     transHdr.Modify();

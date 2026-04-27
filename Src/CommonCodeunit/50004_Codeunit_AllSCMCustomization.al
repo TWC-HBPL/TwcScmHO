@@ -1,6 +1,31 @@
 codeunit 50004 AllSCMCustomization
 {
     EventSubscriberInstance = StaticAutomatic;
+
+
+    //PT-FBTS_Brand JIRAID-674
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"TransferOrder-Post Shipment", OnBeforeTransferOrderPostShipment, '', false, false)]
+    local procedure "TransferOrder-Post Shipment_OnBeforeTransferOrderPostShipment"(var Sender: Codeunit "TransferOrder-Post Shipment"; var TransferHeader: Record "Transfer Header"; var CommitIsSuppressed: Boolean)
+    begin
+        if (TransferHeader.Brand = TransferHeader.Brand::" ") and not (TransferHeader.RSTN) then
+            Error('Plase Enter the Brand Code is Blank ');
+    end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //ICT
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Assembly-Post", OnPostOnBeforePostedAssemblyHeaderInsert, '', false, false)]
     local procedure "Assembly-Post_OnPostOnBeforePostedAssemblyHeaderInsert"(AssemblyHeader: Record "Assembly Header"; var PostedAssemblyHeader: Record "Posted Assembly Header")
@@ -239,6 +264,7 @@ codeunit 50004 AllSCMCustomization
     local procedure RunOnAfterInitItemLedgEntry(var NewItemLedgEntry: Record "Item Ledger Entry"; var ItemJournalLine: Record "Item Journal Line"; var ItemLedgEntryNo: Integer)
     begin
         NewItemLedgEntry.BrandName := ItemJournalLine.BrandName;
+        NewItemLedgEntry.Brand := ItemJournalLine.Brand; //PT-FBTS_Brand JIRAID-674
         NewItemLedgEntry.ManufacturingDate := ItemJournalLine.ManufacturingDate;
         NewItemLedgEntry."W_Parent Item No." := ItemJournalLine."W_Parent Item No.";//PT-FBTS 22-12-25
         NewItemLedgEntry."W_Parent Item Descrption" := ItemJournalLine."W_Parent Item Descrption";//PT-FBTS 22-12-25
@@ -2531,6 +2557,7 @@ var LotNo: Code[20]; var qty: Decimal; var qty_base: Decimal; var qtyshipbase: D
     begin
         TransferShipmentHeader.TransferOrderReferenceNo := TransferHeader.TransferOrderReferenceNo;
         TransferShipmentHeader."Requistion No." := TransferHeader."Requistion No.";
+        TransferShipmentHeader.Brand := TransferHeader.Brand; //PT-FBTS_Brand //PT-FBTS_Brand JIRAID-674
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Transfer Receipt Header", 'OnAfterCopyFromTransferHeader', '', true, true)]
@@ -2539,6 +2566,7 @@ var LotNo: Code[20]; var qty: Decimal; var qty_base: Decimal; var qtyshipbase: D
     begin
         TransferReceiptHeader.TransferOrderReferenceNo := TransferHeader.TransferOrderReferenceNo;
         TransferReceiptHeader."Requistion No." := TransferHeader."Requistion No.";
+        TransferReceiptHeader.Brand := TransferHeader.Brand; //PT-FBTS_Brand //PT-FBTS_Brand JIRAID-674
     end;
 
     //statement line remark validation
@@ -3655,8 +3683,8 @@ var LotNo: Code[20]; var qty: Decimal; var qty_base: Decimal; var qtyshipbase: D
 
         PurchOrderHeader.Validate("Location Code", BlanketOrderPurchHeader."Sub-Location");
         PurchOrderHeader.Modify();
-    end;
 
+    end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"TransferOrder-Post Receipt", 'OnBeforeTransferOrderPostReceipt', '', true, true)]
     local procedure RunOnBeforeTransferOrderPostReceipt(var TransferHeader: Record "Transfer Header"; var CommitIsSuppressed: Boolean; var ItemJnlPostLine: Codeunit "Item Jnl.-Post Line")
@@ -3664,6 +3692,9 @@ var LotNo: Code[20]; var qty: Decimal; var qty_base: Decimal; var qtyshipbase: D
         TransferLine: Record "Transfer Line";
         UserSetup: Record "User Setup";
     begin
+        //PT-FBTS_Brand JIRAID-674
+        if (TransferHeader.Brand = TransferHeader.Brand::" ") and not (TransferHeader.RSTN) then
+            Error('Plase Enter the Brand Code is Blank ');
         Clear(UserSetup);
         IF UserSetup.Get(UserId) then begin
             IF UserSetup."Transfer Post" then begin

@@ -136,6 +136,7 @@ report 50000 "Indent Process"
                                     purchHdr.Validate("No.", noseriesmgt.GetNextNo(PurSetup."Order Nos.", WorkDate(), true));
                                     purchHdr.Insert();
                                     purchHdr.Validate("Buy-from Vendor No.", "Indent Mapping"."Source Location No.");
+                                    purchHdr.Validate(Brand, IndentHeader.Brand);//PT-FBTS_Brand JIRAID-674
                                     purchHdr.Validate("Location Code", "Indent Mapping"."Location Code");
                                     // purchHdr.Validate("Shortcut Dimension 1 Code", IndentHeader1.DepartmentCode);
                                     purchHdr.Validate("Indent No.", IndentHeader1."No.");
@@ -325,6 +326,7 @@ report 50000 "Indent Process"
             purchHdr.Validate("No.", noseriesmgt.GetNextNo(PurSetup."Order Nos.", WorkDate(), true));
             purchHdr.Validate("Buy-from Vendor No.", "Indent Mapping"."Source Location No.");
             purchHdr.Validate("Location Code", "Indent Mapping"."Location Code");
+            purchHdr.Validate(Brand, IndentHeader.Brand);
             // purchHdr.Validate("Shortcut Dimension 1 Code", IndentHeader1.DepartmentCode);
             purchHdr.Validate("Indent No.", IndentHeader1."No.");
             purchHdr.Validate("Document Date", Today);

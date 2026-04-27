@@ -2,6 +2,12 @@ pageextension 50034 PurchaseReturnExt extends "Purchase Return Order"
 {
     layout
     {
+        //PT-FBTS_Brand JIRAID-674FV
+        addafter("Buy-from City")
+        {
+            field(Brand; Rec.Brand)
+            { ApplicationArea = all; }
+        }
         // Add changes to page layout here
         modify("Buy-from Vendor No.")
         {
@@ -48,6 +54,16 @@ pageextension 50034 PurchaseReturnExt extends "Purchase Return Order"
         modify(CalculateInvoiceDiscount)
         {
             Enabled = False;
+        }
+        modify(Post)
+        {
+            trigger OnBeforeAction()
+            var
+                myInt: Integer;
+            begin
+                if Rec.Brand = Rec.Brand::" " then
+                    Error('Please enter the Brand Code');
+            end;
         }
     }
 

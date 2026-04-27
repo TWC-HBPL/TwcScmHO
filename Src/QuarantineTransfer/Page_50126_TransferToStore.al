@@ -37,6 +37,9 @@ page 50126 "Quarantine Transfer To Store"
                     ToolTip = 'Specifies the type of transaction that will be posted from the item journal line.';
                     Visible = false;
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                { ApplicationArea = all; }
                 // field(EntryType; EntryType)
                 // {
                 //     ApplicationArea = Basic, Suite;

@@ -136,6 +136,12 @@ page 51017 "GRN List"
                     ApplicationArea = all;
                     ToolTip = 'Specifies the value of the PI Rate field.', Comment = '%';
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the PI Rate field.', Comment = '%';
+                }
             }
         }
         area(Factboxes)
@@ -166,7 +172,7 @@ page 51017 "GRN List"
                     LineNo: Integer;
                     GRN_gRec: Record GRN;
                     GRNLineCheck_gRec: Record GRN;
-
+                    BrandText: Text[50];
                     DATEvalue: text;
                     DATEvalue1: text;
                     EntryNo: Integer;
@@ -217,7 +223,11 @@ page 51017 "GRN List"
                                 Evaluate(GRN_gRec."PI Qty.", GetValueAtCell(LineNo, 20));
                             if GetValueAtCell(LineNo, 21) <> '' then
                                 Evaluate(GRN_gRec."PI Rate", GetValueAtCell(LineNo, 21));
-
+                            //PT-FBTS_Brand JIRAID-674
+                            if GetValueAtCell(LineNo, 24) <> '' then begin
+                                BrandText := GetValueAtCell(LineNo, 24);
+                                Evaluate(GRN_gRec.Brand, BrandText);
+                            end;
                             //     Evaluate(GRN_gRec."DC Date", GetValueAtCell(LineNo, 21));
                             GRN_gRec.Insert();
                             //  end;
@@ -301,6 +311,7 @@ page 51017 "GRN List"
                                         PurchaseHeader.Validate("Buy-from Vendor No.", GRN_lRec."Vendor No.");
                                         PurchaseHeader.Validate("Location Code", GRN_lRec."Location Code");
                                         PurchaseHeader.Validate("Posting Date", GRN_lRec."GRN Date");//Aashish
+                                        PurchaseHeader.Validate(Brand, GRN_lRec.Brand);//PT- FBTS Brand//PT-FBTS_Brand JIRAID-674
                                         PurchaseHeader.Validate("Order No", GRN_lRec."Purchase Order No.");//PT-FBTS 11-12-24
                                         //PurchaseHeader.Validate("Posting Date", Today);
                                         IF GRN_lRec."Vendor Invoice Date" <> '' then begin

@@ -47,6 +47,11 @@ page 50078 PostedWastageEntryCard
                     Editable = false;
 
                 }
+                field(Brand; Rec."Brand") //PT-FBTS_Brand JIRAID-674
+                {
+                    ApplicationArea = all;
+                    Editable = false;
+                }
 
                 field("Created Date"; Rec."Created Date")
                 {

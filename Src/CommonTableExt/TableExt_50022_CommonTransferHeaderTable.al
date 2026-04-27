@@ -6,7 +6,13 @@ tableextension 50022 TransferOrderSCMExt extends "Transfer Header"
         //indent start
         // Add changes to table fields here
 
-
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(50000; "Requistion No."; Code[25])
         {
             DataClassification = ToBeClassified;

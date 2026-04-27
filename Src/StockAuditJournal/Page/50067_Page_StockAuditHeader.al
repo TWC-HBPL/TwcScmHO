@@ -134,6 +134,7 @@ page 50067 StockAuditHeader
                 Image = Process;
                 trigger OnAction()
                 var
+                    Item_lRec: Record item;
                     TempItemJnlLine: Record "Item Journal Line";
                     TempItemJnlLine1: Record "Item Journal Line";
                     TempStockAuditLine: Record StockAuditLine;
@@ -216,6 +217,16 @@ page 50067 StockAuditHeader
                         Stockline2.SetRange("DocumentNo.", rec."No.");
                         if Stockline2.FindSet() then begin
                             repeat
+                                //PT-FBTS_Brand JIRAID-674
+                                //04-27-2026-NS-Ashish
+                                Clear(Item_lRec);
+                                IF Item_lRec.GET(Stockline2."Item Code") then;
+                                if Item_lRec.Brand = Item_lRec.Brand::" " then
+                                    Error('Please enter the Brand Code for Item Code %1', Item_lRec."No.");
+                                //04-27-2026-NE
+
+
+
                                 NetchangeQty := 0;
                                 IF TempUsersetup2.get(UserId) then;
                                 Recitem.SetRange("No.", Stockline2."Item Code");
@@ -369,6 +380,8 @@ page 50067 StockAuditHeader
                                         //  Message(TempItemJnlLine."Item No.");                                    
 
                                         IF TempItem.Get(TempItemJnlLine."Item No.") then;
+                                        //PT-FBTS_Brand JIRAID-674
+                                        TempItemJnlLine.Brand := TempItem.Brand;//PT-FBTS Brand//04-27-2026-N-Ashish
                                         TempItemJnlLine."Gen. Prod. Posting Group" := TempItem."Gen. Prod. Posting Group";
                                         TempItemJnlLine.Validate(TempItemJnlLine."Gen. Prod. Posting Group");
 
@@ -626,6 +639,7 @@ page 50067 StockAuditHeader
                     Stockline3: Record StockAuditLine;
                     countline: Integer;
                     Stockline: Record StockAuditLine;
+                    Item_lRec: Record item;
 
                 begin
                     TempUsersetup2.Get(UserId); //PT-FBTS
@@ -647,6 +661,17 @@ page 50067 StockAuditHeader
                         Stockline2.SetRange("DocumentNo.", rec."No.");
                         if Stockline2.FindSet() then begin
                             repeat
+                                //PT-FBTS_Brand JIRAID-674
+                                //04-27-2026-NS-Ashish
+                                Clear(Item_lRec);
+                                IF Item_lRec.GET(Stockline2."Item Code") then;
+                                if Item_lRec.Brand = Item_lRec.Brand::" " then
+                                    Error('Please enter the Brand Code for Item Code %1', Item_lRec."No.");
+                                //04-27-2026-NE
+
+
+
+
                                 NetchangeQty := 0;
                                 IF TempUsersetup2.get(UserId) then;
                                 Recitem.SetRange("No.", Stockline2."Item Code");

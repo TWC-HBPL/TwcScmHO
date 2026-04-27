@@ -7,8 +7,15 @@ tableextension 50170 AssemblyHeader extends "Assembly Header"
         {
             DataClassification = ToBeClassified;
         }
-        field(50102; "Order Posted"; Boolean)
+        field(50102; "Order Posted"; Boolean) //PT-FBTS_Brand JIRAID-674
         { }//ICT
+        field(50005; Brand; Option)
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
 
     }
 

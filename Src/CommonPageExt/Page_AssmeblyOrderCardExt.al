@@ -9,6 +9,11 @@ pageextension 50174 AssemblyOrder extends "Assembly Order"
             {
                 ApplicationArea = all;
             }
+            //PT-FBTS_Brand JIRAID-674
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = all;
+            }
         }
         modify("Location Code")
         {
@@ -21,6 +26,16 @@ pageextension 50174 AssemblyOrder extends "Assembly Order"
         // Add changes to page actions here
         modify("P&ost") //PT-FBTS-09/12/25
         {
+            //PT-FBTS_Brand JIRAID-674FV
+            trigger OnBeforeAction()
+
+            var
+                myInt: Integer;
+            begin
+                if Rec.Brand = Rec.Brand::" " then
+                    Error('Please Check the Brand Code is Blank');
+            end;
+
             trigger OnAfterAction()
             var
                 myInt: Integer;

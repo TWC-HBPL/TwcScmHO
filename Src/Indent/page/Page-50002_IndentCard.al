@@ -50,6 +50,24 @@ page 50002 IndentCard
                     Editable = false;
 
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = All;
+                    Editable = Status_lBool;
+                    trigger OnValidate()
+                    var
+                        IndetLine: Record Indentline;
+                    begin
+                        if Rec.Brand <> xRec.Brand then begin//pT-FBTS 22-04-26
+
+                            IndetLine.Reset();
+                            IndetLine.SetRange("DocumentNo.", Rec."No.");
+                            if IndetLine.FindFirst() then
+                                Error('You cannot change Brand because lines already exist. Please delete lines first.');
+                        end;//pT-FBTS 22-04-26
+                    end;
+                }
                 field(DepartmentCode; Rec."DepartmentCode")
                 {
                     ApplicationArea = All;
@@ -116,7 +134,9 @@ page 50002 IndentCard
 
                         // IF ItemforIndent.FindSet() then
                         //  ItemforIndent.DeleteAll(true);
-
+                        //PT-FBTS_Brand JIRAID-674
+                        if Rec.Brand = Rec.Brand::" " then //pT-FBTS 22-04-26
+                            Error('Please select Brand first.');
                         indent.Reset();
                         indent.SetRange("No.", Rec."No.");
                         if indent.FindFirst() then begin
@@ -124,6 +144,8 @@ page 50002 IndentCard
                                 IF Rec."Order Type" = Rec."Order Type"::Regular then begin
                                     Item.reset;
                                     //Item.SetRange(Special, false);
+                                    //PT-FBTS_Brand JIRAID-674
+                                    Item.SetRange(Brand, Rec.Brand);//pT-FBTS 22-04-26
                                     Item.SetRange("Item Category Code", rec.Category);
                                     if item.FindFirst() then
                                         repeat
@@ -179,6 +201,8 @@ page 50002 IndentCard
                                 IF Rec."Order Type" = Rec."Order Type"::Special then begin
                                     Item.reset;
                                     // Item.SetRange(Special, True);
+                                    //PT-FBTS_Brand JIRAID-674
+                                    Item.SetRange(Brand, Rec.Brand);//pT-FBTS 22-04-26
                                     Item.SetRange("Item Category Code", rec.Category);
                                     if item.FindFirst() then
                                         repeat
@@ -313,6 +337,10 @@ page 50002 IndentCard
                     Item: Record Item;
                     indentline1: Record Indentline;
                 begin
+                    //PT-FBTS_Brand JIRAID-674
+                    if Rec.Brand = Rec.Brand::" " then
+                        Error('Please enter the Brand Code');
+
                     indentline.Reset();
                     indentline.SetRange("DocumentNo.", "No.");
                     IF not indentline.FindFirst() then
@@ -626,9 +654,35 @@ page 50002 IndentCard
         Rec.Type := Rec.Type::Item; //23Nov2023
     end;
 
+
+
+
+    //PT-FBTS_Brand JIRAID-674
+    trigger OnAfterGetCurrRecord()
+    var
+        myInt: Integer;
+    begin
+        IF Rec.Status = Rec.Status::Released then
+            Status_lBool := false
+        else
+            Status_lBool := True;
+    end;
+
+    //PT-FBTS_Brand JIRAID-674
+    trigger OnAfterGetRecord()
+    var
+        myInt: Integer;
+    begin
+        IF Rec.Status = Rec.Status::Released then
+            Status_lBool := false
+        Else
+            Status_lBool := True;
+    end;
+
     var
         Setedit1: Boolean;
         Invsetup: Record 313;
         locationRec: Record Location;
+        Status_lBool: Boolean;
 
 }

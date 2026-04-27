@@ -2,6 +2,13 @@ tableextension 50050 TransfreReceiptHeadExt extends "Transfer Receipt Header"
 {
     fields
     {
+        field(50105; Brand; Option)  //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(50103; TransferOrderReferenceNo; Code[20])
         {
             Caption = 'TransferOrderReferenceNo';

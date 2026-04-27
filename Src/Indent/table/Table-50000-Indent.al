@@ -174,6 +174,13 @@ table 50000 IndentHeader
         { }
         field(50034; "RPO No."; Code[20])
         { }
+        field(50048; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(50035; "Approval Required"; Boolean)
         { }
         field(50036; "Approved By"; Code[50])

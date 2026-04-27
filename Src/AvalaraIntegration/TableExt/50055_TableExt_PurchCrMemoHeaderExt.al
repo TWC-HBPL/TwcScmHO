@@ -67,7 +67,13 @@ tableextension 50055 PurchCrMemoGSTExt extends "Purch. Cr. Memo Hdr."
             end;
         }
         // PT-FBTS 10-11-2025 RepCounter
-
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
 
     }
     keys

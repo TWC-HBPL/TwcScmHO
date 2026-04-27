@@ -12,6 +12,13 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
         {
 
         }
+        field(50123; Brand; Option) //PT-FBTS_Brand JIRAIFVD-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(50003; "Indent No."; Code[25])
         {
 
@@ -152,6 +159,9 @@ tableextension 50021 PurchaseOrderShortClosedExt extends "Purchase Header"
         {
             DataClassification = ToBeClassified;
         }
+
+
+
     }
 
     var

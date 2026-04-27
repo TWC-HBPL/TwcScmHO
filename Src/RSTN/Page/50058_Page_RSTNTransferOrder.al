@@ -135,6 +135,21 @@ page 50058 "RSTN Tranfer Order"
                 {
 
                 }
+                //PT-FBTS_Brand JIRAID-674
+                Field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    Editable = false;
+                    trigger OnValidate()
+                    var
+                        TransferLine: Record "Transfer Line"; //PT-FBTS_Brand 
+                    begin
+                        TransferLine.SetRange("Document No.", Rec."No.");
+                        TransferLine.SetFilter("Quantity Shipped", '>0');
+                        if not TransferLine.IsEmpty then
+                            Error('You cannot change Brand because shipment has already started.');
+                    end;
+                }
                 field("Direct Transfer"; Rec."Direct Transfer")
                 {
                     ApplicationArea = Location;
@@ -192,6 +207,9 @@ page 50058 "RSTN Tranfer Order"
                             // Rec."In-Transit Code" := 'INTRANSIT'; //AsPerREQ12102023
                             Rec."In-Transit Code" := 'INTRANSIT1';
                             Rec.Validate(Rec."In-Transit Code");
+                            //PT-FBTS_Brand JIRAID-674
+                            Rec.Brand := TempReceiptHeader.Brand; //PT-FBTS_brand 
+                            Rec.Validate(Rec.Brand);
                             CurrPage.Update();
 
                             //     TempTransferLine2.Reset();//OLDCode PT-FBTS 25-07-24

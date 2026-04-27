@@ -134,6 +134,12 @@ page 50154 "RSTN In Tranfer Order"
                 {
 
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Brand field.', Comment = '%';
+                }
                 field("Direct Transfer"; Rec."Direct Transfer")
                 {
                     ApplicationArea = Location;
@@ -751,7 +757,9 @@ page 50154 "RSTN In Tranfer Order"
                         TempUserSetup: Record "User Setup";
                         CodeunittransferInOut: Codeunit TransferInOut;
                     begin
-
+                        //PT-FBTS_Brand JIRAID-674
+                        IF Rec.Brand = Rec.Brand::" " then
+                            Error('Please Check Brand Code is blank');
                         IF Rec.Status = Rec.Status::Open then
                             Error('Order Must be released before posting');
                         //validation to check if location code is coorect

@@ -91,6 +91,19 @@ page 50121 "Quarantine Card"
                         PostingDateOnAfterValidate();
                     end;
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = all;
+                    trigger OnValidate()
+                    begin
+
+                        if xRec.Brand <> Rec.Brand then begin
+                            if Rec.Status_ <> Rec.Status_::Open then
+                                Error('You can change Brand only when Status is Open. Current Status is %1', Rec.Status_)
+                        end;
+                    end;
+                }
                 // field("Shortcut Dimension 1 Code"; Rec."Shortcut Dimension 1 Code")
                 // {
                 //     ApplicationArea = Dimensions;
@@ -737,6 +750,9 @@ page 50121 "Quarantine Card"
                         TransLine1: Record "Transfer Line";
 
                     begin
+                        //PT-FBTS_Brand JIRAID-674
+                        if rec.Brand = Rec.Brand::" " then
+                            Error('Please Check the Brand code is blank');
                         TransLine.SetRange("Document No.", rec."No.");
                         if TransLine.FindSet() then begin
                             repeat
@@ -812,6 +828,9 @@ page 50121 "Quarantine Card"
 
                     trigger OnAction()
                     begin
+                        //PT-FBTS_Brand JIRAID-674
+                        if rec.Brand = Rec.Brand::" " then
+                            Error('Please Check the Brand code is blank');
                         if Rec.Status_ <> Rec.Status_::Approved then
                             Error('Status must be approved')
                         else

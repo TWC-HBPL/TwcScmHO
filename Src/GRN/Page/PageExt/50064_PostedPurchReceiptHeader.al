@@ -27,7 +27,14 @@ pageextension 50064 PostedPurchaseReceiptExt extends "Posted Purchase Receipt"
                 Editable = false;
                 ApplicationArea = all;//PT-FBTS 230524    
             }
+            //PT-FBTS_Brand JIRAID-674FV
 
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = All;
+                Editable = false;
+                ToolTip = 'Specifies the value of the Response Data field.', Comment = '%';
+            }
 
         }
     }

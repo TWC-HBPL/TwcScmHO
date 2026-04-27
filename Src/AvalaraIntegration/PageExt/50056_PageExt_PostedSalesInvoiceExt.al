@@ -2,6 +2,15 @@ pageextension 50056 PostedSalesExtGST extends "Posted Sales invoice"
 {
     layout
     {
+        //PT-FBTS_Brand JIRAID-674
+        addafter("Posting Date")
+        {
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = all;
+                Editable = false;
+            }
+        }
         // Add changes to page layout here
         addafter("No.")
         {

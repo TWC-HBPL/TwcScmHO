@@ -88,6 +88,13 @@ page 50144 "Indent FA Processing Page"
                     Caption = 'Created By';
                     Editable = false;
                 }
+                //PT-FBTS_Brand JIRAID-674
+                field(Brand; Rec.Brand)
+                {
+                    ApplicationArea = All;
+                    //Caption = 'Created By';
+                    Editable = false;
+                }
             }
         }
     }
@@ -390,6 +397,7 @@ page 50144 "Indent FA Processing Page"
         // transHdr.Validate("In-Transit Code", 'INTRANSIT');
         transHdr.Validate("In-Transit Code", 'INTRANSIT1');
         transHdr.Validate("Shipment Date", recIndent."Posting date");
+        transHdr.Validate(Brand, recIndent.Brand);//PT-FBTS Brand//PT-FBTS_Brand JIRAID-674
         transHdr.Insert(true);
 
 

@@ -40,14 +40,25 @@ table 50008 WastageEntryLine
         field(5; "Item Code"; Code[20])
         {
             DataClassification = ToBeClassified;
-            TableRelation = Item."No." where(Blocked = const(false));
+            // TableRelation = Item."No." where(Blocked = const(false));
             trigger OnValidate()
             var
                 TempUnitOfMeasure: Record "Unit of Measure";
                 wastageHeader: Record WastageEntryHeader;
                 StockkeepingUnitPrice: Record "Stockkeeping Unit";//PT-FBTS
                 TempWastageEntryHead: Record WastageEntryHeader;
+                ItemRec: Record Item;
             begin
+
+                if WastageHeader.Get(Rec."DocumentNo.") then begin //PT-FBTS_Brand
+                    // if WastageHeader.Brand = WastageHeader.Brand::" " then
+                    //     Error('Brand must have a value.');
+                    if ItemRec.Get(Rec."Item Code") then begin
+                        if ItemRec.Brand <> WastageHeader.Brand then
+                            Error('Item %1 is not allowed. Only items with Brand %2 are allowed.', Rec."Item Code", WastageHeader.Brand);
+                    end;
+                end;
+
                 ////OldCode
                 IF TempItem.Get(Rec."Item Code") then;
                 Description := TempItem.Description;
@@ -69,7 +80,28 @@ table 50008 WastageEntryLine
                     UnitPrice := TempItem."Unit Cost";
 
             end;
+
+            trigger OnLookup() //PT-FBTS_Brand
+            var
+                ItemRec: Record Item;
+                WastageHeader: Record WastageEntryHeader;
+            begin
+                if WastageHeader.Get(Rec."DocumentNo.") then begin
+                    if WastageHeader.Brand = WastageHeader.Brand::" " then
+                        Error('Brand must have a value.');
+                    ItemRec.Reset();
+                    ItemRec.SetRange(Blocked, false);
+                    ItemRec.SetRange(Brand, WastageHeader.Brand);
+                    if Page.RunModal(Page::"Item List", ItemRec) = Action::LookupOK then begin
+                        Rec.Validate("Item Code", ItemRec."No.");
+                    end;
+                end;
+
+                // exit(true);
+            end;
+
         }
+
 
         field(6; "Description"; Text[100])
         {

@@ -3,6 +3,13 @@ tableextension 50065 Production extends "Production Order"
     fields
     {
         // Add changes to table fields here
+        field(50003; Brand; Option)//PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
         field(50000; Shortclose; Boolean) //PT-FBTS-10-09-2025
         {
             Caption = 'Short Close';

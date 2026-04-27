@@ -2,6 +2,15 @@ pageextension 50054 PostedSalesCreditExtGST extends "Posted Sales Credit Memo"
 {
     layout
     {
+        //PT-FBTS_Brand JIRAID-674
+        addafter("Posting Date")
+        {
+            field(Brand; Rec.Brand)
+            {
+                ApplicationArea = all;
+                Editable = false;
+            }
+        }
         // Add changes to page layout here
         addafter("Distance (Km)")
         {

@@ -46,6 +46,13 @@ tableextension 50027 ItemLedegrEntryExt extends "Item Ledger Entry"
         {
 
         }//PT-FBTS-22-12-2025
+        field(50227; Brand; Option)//PT-FBTS_Brand JIRAID-674
+        {
+            Caption = 'Brand';
+            OptionMembers = " ","Third Wave","Third Rush";
+            OptionCaption = ' ,Third Wave,Third Rush';
+            DataClassification = ToBeClassified;
+        }
 
         //TodayQuarantine //AJ_ALLE_22012024
         //AJ_ALLE_17012023

@@ -18,6 +18,7 @@ tableextension 50026 FixedAssetExt extends "Fixed Asset"
         {
             DataClassification = ToBeClassified;
         }
+
     }
 
     var
