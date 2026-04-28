@@ -148,6 +148,7 @@ codeunit 50133 "ICT Processes_Custom_ILE"
         xICTHeader.SetCurrentKey("Source TableNo", "Date Of Status", "Dist. Location From", "Time Of Status");//020126
         xICTHeader.SetFilter("Source TableNo", '%1', 83); //FBTS AA 040126
         xICTHeader.SetFilter("Source Code", '<>%1', 'ITEMJNL');
+        xICTHeader.SetRange(Error, FALSE);
         xICTHeader.SetRange(xICTHeader."Dist. Location To", xInfoStoreSetup."Distribution Location");
         if pProcessDistLocation <> '' then
             xICTHeader.SetRange(xICTHeader."Dist. Location From", pProcessDistLocation);

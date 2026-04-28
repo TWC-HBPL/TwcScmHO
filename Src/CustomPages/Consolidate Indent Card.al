@@ -163,6 +163,15 @@ page 50161 "Consolidate Indent Card"
         NewNo: Code[20];
         LineNo: Integer;
         ReleasePurchDoc: Codeunit "Release Purchase Document";
+        LocationRec: Record Location;
+        MultipleTaxApplicable: Record "Multiple Tax Applicable";
+        storeReason: Option;
+        Item: Record Item;
+        StockkeepingUnitPrice: Record "Stockkeeping Unit";
+        GSTPer: Decimal;
+        BookvalueGST: Decimal;
+        i: Integer;
+        TaxCaseExecution: Codeunit "Use Case Execution";
 
     begin
         IndentLine.SetRange(" Document No.", DocumentNo);
@@ -255,13 +264,53 @@ page 50161 "Consolidate Indent Card"
                             TransferLine.Validate("Item No.", IndentLine."Item No");
                             TransferLine.Validate("Unit of Measure Code", IndentLine.UOM);
                             TransferLine.Validate(Quantity, IndentLine.Quantity);
+
+                            LocationRec.Reset(); //PT-FBTS- JIRAID-882
+                            LocationRec.SetRange(Code, TransferHeader."Transfer-from Code");
+                            if LocationRec.FindFirst() then begin
+                                MultipleTaxApplicable.Reset();
+                                MultipleTaxApplicable.SetRange(StoreRegion, LocationRec.StoreRegion);
+                                MultipleTaxApplicable.SetRange(Item, TransferLine."Item No.");
+                                if MultipleTaxApplicable.FindFirst() then begin
+                                    if TransferLine."Item No." <> '9999999' then begin///
+                                        TransferLine.Validate("GST Group Code", MultipleTaxApplicable."GST Group Code");
+                                        TransferLine.Validate("HSN/SAC Code", MultipleTaxApplicable."HSN/SAC Code");
+                                    end;
+                                end else begin
+                                    if Item.Get(TransferLine."Item No.") then begin
+                                        if not item.IsFixedAssetItem then begin
+                                            TransferLine.Validate("GST Group Code", Item."GST Group Code");
+                                            TransferLine.Validate("HSN/SAC Code", Item."HSN/SAC Code");
+                                        end;//PT-FBTS- JIRAID-882
+                                    end;
+                                end;
+                            end;
+
+
+                            Clear(BookvalueGST);
+                            Clear(GSTPer);
+                            StockkeepingUnitPrice.Reset(); //PT-FBTS- JIRAID-882
+                            StockkeepingUnitPrice.SetRange("Location Code", TransferHeader."Transfer-from Code");
+                            StockkeepingUnitPrice.SetRange("Item No.", TransferLine."Item No.");
+                            if StockkeepingUnitPrice.FindFirst() then begin
+                                Evaluate(GSTPer, TransferLine."GST Group Code");
+                                BookvalueGST := Round(StockkeepingUnitPrice."Unit Cost" / (100 + GSTPer) * 100);
+                                TransferLine.Validate("Transfer Price", BookvalueGST);
+                            End
+                            else
+                                if Item.Get(TransferLine."Item No.") then begin
+                                    Evaluate(GSTPer, TransferLine."GST Group Code");
+                                    BookvalueGST := Round(Item."Unit Cost" / (100 + GSTPer) * 100);
+                                    TransferLine.Validate("Transfer Price", BookvalueGST);
+                                end;
                             TransferLine.Insert(true);
-                            TransferLine.Validate("Transfer Price");//Aashish 10-09-2025
+                            TaxCaseExecution.HandleEvent('OnAfterTransferPrirce', TransferLine, '', 0);
+                            //PT-FBTS- JIRAID-882
+                            //TransferLine.Validate("Transfer Price");//Aashish 10-09-2025
                             //IndentLine."Referance No." := NewNo;
                             IndentLine."Referance No." := LastTransNo;
                             IndentLine.Modify();
                         end;
-
                 end;
             until IndentLine.Next() = 0;
 

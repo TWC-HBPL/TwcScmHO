@@ -7,10 +7,10 @@ tableextension 50145 saleshea extends "Sales Header"
         // {
         //     DataClassification = ToBeClassified;
         // }
-        field(50000; "Response Data"; Text[2048])
-        {
+        // field(50000; "Response Data"; Text[2048])
+        // {
 
-        }
+        // }
         field(50123; Brand; Option) //PT-FBTS_Brand JIRAID-674
         {
             Caption = 'Brand';

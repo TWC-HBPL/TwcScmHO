@@ -97,7 +97,7 @@ page 50059 "RSTN Transfer Order Subform"
                          String7: Text[10];
                          String8: Text[10];
                          LineCount: Integer;
-
+                         
                      begin
 
                          TempTransferHeader.Reset();

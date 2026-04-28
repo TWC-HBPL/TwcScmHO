@@ -64,7 +64,6 @@ page 50042 "In Transfer Order"
                 }
                 field(TransfertoName; Rec."Transfer-to Name")
                 {
-
                 }
                 //PT-FBTS_Brand JIRAID-674
                 field(Brand; Rec.Brand)

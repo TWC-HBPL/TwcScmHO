@@ -12,6 +12,8 @@ tableextension 50136 RetailICTHeaderExt extends "LSC Retail ICT Header"
         { }
         field(50004; "Invoice Inventory ICT"; Boolean) //FBTS AA 180126
         { }
+        field(50005; "Error"; Boolean) //FBTS AA 280426
+        { }
     }
 
     keys

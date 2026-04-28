@@ -3686,6 +3686,29 @@ var LotNo: Code[20]; var qty: Decimal; var qty_base: Decimal; var qtyshipbase: D
 
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Blanket Purch. Order to Order", OnAfterPurchOrderLineInsert, '', false, false)]
+    local procedure "Blanket Purch. Order to Order_OnAfterPurchOrderLineInsert"(var PurchaseLine: Record "Purchase Line"; var BlanketOrderPurchLine: Record "Purchase Line")
+    var
+        PurchaseHeader_lRec: Record "Purchase Header";
+    begin
+        if BlanketOrderPurchLine."Document Type" <> BlanketOrderPurchLine."Document Type"::"Blanket Order" then
+            exit;
+        if PurchaseLine.Quantity = 0 then
+            exit;
+        // ADD converted qty (cumulative)
+        BlanketOrderPurchLine."Converted Qty." := BlanketOrderPurchLine."Converted Qty." + PurchaseLine.Quantity;
+        BlanketOrderPurchLine.Modify();
+
+        Clear(PurchaseHeader_lRec);
+        IF PurchaseHeader_lRec.GET(PurchaseLine."Document Type", PurchaseLine."Document No.") then BEGIN
+            PurchaseLine.validate("Location Code", PurchaseHeader_lRec."Location Code");
+            //.Validate("Converted Qty.", PurchaseLine."Qty. to Receive" + PurchaseLine.Quantity);
+            PurchaseLine.validate("Qty. to Receive", 0); //PT-FBTS 5-12-25
+            PurchaseLine.Modify();
+        END;
+    end;
+
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"TransferOrder-Post Receipt", 'OnBeforeTransferOrderPostReceipt', '', true, true)]
     local procedure RunOnBeforeTransferOrderPostReceipt(var TransferHeader: Record "Transfer Header"; var CommitIsSuppressed: Boolean; var ItemJnlPostLine: Codeunit "Item Jnl.-Post Line")
     var
