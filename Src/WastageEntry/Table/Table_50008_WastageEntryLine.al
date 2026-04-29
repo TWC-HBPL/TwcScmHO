@@ -50,6 +50,12 @@ table 50008 WastageEntryLine
                 ItemRec: Record Item;
             begin
 
+                WastageHeader.Reset(); //JIRAID-889 
+                WastageHeader.SetRange("No.", Rec."DocumentNo.");
+                IF WastageHeader.FindFirst() Then
+                    rec."Location Code" := WastageHeader."Location Code";
+                //JIRAID-889 
+
                 if WastageHeader.Get(Rec."DocumentNo.") then begin //PT-FBTS_Brand
                     // if WastageHeader.Brand = WastageHeader.Brand::" " then
                     //     Error('Brand must have a value.');
