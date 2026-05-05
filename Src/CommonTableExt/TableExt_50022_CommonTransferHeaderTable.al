@@ -128,6 +128,29 @@ tableextension 50022 TransferOrderSCMExt extends "Transfer Header"
         field(51117; "Direct Transfer Posted"; Boolean)
         { }
         //ICT
+
+        field(50008; "Production Order No."; Code[20]) //PT-FBTS-JiraID-867
+        {
+            TableRelation = "Production Order"."No."
+            where(Status = const(Released), "Location Code" = field("Transfer-to Code"));
+            trigger OnValidate()
+            var
+                ProdCom: Record "Prod. Order Component";
+            begin
+
+            end;
+        }
+        field(50009; "Production Comp Out"; Code[20])//PT-FBTS-JiraID-867
+        {
+            TableRelation = "Production Order"."No."
+            where(Status = filter(Released | Finished), "Location Code" = field("Transfer-from Code"));
+
+        }
+        field(50010; "job work"; Boolean)
+        {
+
+        }//PT-FBTS-JiraID-867
+
     }
     //ALLE_NICK_261223
     procedure CheckTransferLines(Ship: Boolean)
