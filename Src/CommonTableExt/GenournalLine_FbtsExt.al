@@ -2,6 +2,7 @@ tableextension 50127 GenournalLine extends "Gen. Journal Line"
 {
     fields
     {
+
         // Add changes to table fields here
         field(50000; "PO No."; Code[20])
         {
